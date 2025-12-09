@@ -33,7 +33,7 @@ public class Menu {
 
     @Id
     @Column(name = "caterer_id")
-    private int caterer_id;
+    private int catererId;
 
     @Column(name = "minimum_pax", nullable = false)
     private int minimumPax;

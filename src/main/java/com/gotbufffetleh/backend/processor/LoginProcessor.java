@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LoginProcessor {
-    private String username;
-    private String password;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
+    //Autowire the UserRepo
     public LoginProcessor(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -19,7 +18,7 @@ public class LoginProcessor {
 
     public User login(String email, String password ) {
         return userRepository.findByEmail(email).map(user -> {
-            if (user.getPassword().equals(password)){
+            if (user.getPasswordHash().equals(password)){
                 return user;
             }
             return null;

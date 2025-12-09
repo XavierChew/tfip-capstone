@@ -24,8 +24,8 @@ public class Caterers {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "caterers_id")
-    private int caterersId;
+    @Column(name = "caterer_id")
+    private int catererId;
 
     @Column(name = "caterer_name")
     private String catererName;
