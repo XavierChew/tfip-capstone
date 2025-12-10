@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 private final LoginProcessor loginProcessor;
 private final RegisterProcessor registerProcessor;
@@ -22,6 +23,14 @@ public AuthController(LoginProcessor loginProcessor, RegisterProcessor registerP
     this.registerProcessor = registerProcessor;
 }
 
+/**
+ * <pre>{@code
+ * {
+ *       "email": "john@email.com",
+ *       "password": "johnpw"
+ * }
+ * }</pre>
+ * */
 @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
