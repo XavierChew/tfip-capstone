@@ -44,7 +44,7 @@ public AuthController(LoginProcessor loginProcessor, RegisterProcessor registerP
         return new ResponseEntity<>(registeredUser, HttpStatus.OK);
     }
     else {
-        return new ResponseEntity<>("Invalid email or password.", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Email is already registered", HttpStatus.UNAUTHORIZED);
     }
 }
 

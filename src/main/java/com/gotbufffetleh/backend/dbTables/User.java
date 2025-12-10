@@ -27,12 +27,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int userId;
+    private long userId;
 
     @Column(name = "d_name", nullable = false)
     private String displayName;
     @Column(name = "p_word", nullable = false)
-    private String passwordHash;
+    private String password;
     @Column(name = "email", nullable = false)
     private String email;
 

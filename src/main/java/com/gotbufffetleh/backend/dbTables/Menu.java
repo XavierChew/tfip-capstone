@@ -1,14 +1,6 @@
 package com.gotbufffetleh.backend.dbTables;
 
-import com.gotbufffetleh.backend.dbTables.idClasses.MenuId;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
+import jakarta.persistence.*;
 
 
 import lombok.Getter;
@@ -17,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Setter
 @Getter
@@ -24,16 +17,18 @@ import java.math.BigDecimal;
 @ToString
 @Entity
 @Table(name = "menus")
-@IdClass(MenuId.class)
 public class Menu {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="menu_id")
+    private long menuId;
+
     @Column(name = "m_name")
     private String menuName;
 
-    @Id
-    @Column(name = "caterer_id")
-    private int catererId;
+//    @Column(name = "caterer_id")
+//    private long catererId;
 
     @Column(name = "minimum_pax", nullable = false)
     private int minimumPax;
@@ -52,5 +47,7 @@ public class Menu {
     @JoinColumn(name = "caterer_id", nullable = false)
     private Caterers caterer;
 
+    @OneToMany(mappedBy = "menu")
+    private List<Reviews> reviewsList;
 
 }

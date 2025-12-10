@@ -25,13 +25,13 @@ public class Caterers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "caterer_id")
-    private int catererId;
+    private long catererId;
 
     @Column(name = "caterer_name")
     private String catererName;
 
     @Column(name = "contact_no")
-    private int contactNo;
+    private String contactNo;
 
     @Column(name = "email")
     private String email;

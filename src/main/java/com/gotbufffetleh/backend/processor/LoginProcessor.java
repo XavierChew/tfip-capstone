@@ -18,7 +18,7 @@ public class LoginProcessor {
 
     public User login(String email, String password ) {
         return userRepository.findByEmail(email).map(user -> {
-            if (user.getPasswordHash().equals(password)){
+            if (user.getPassword().equals(password)){
                 return user;
             }
             return null;

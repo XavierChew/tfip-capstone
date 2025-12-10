@@ -20,12 +20,19 @@ public class RegisterProcessor {
     public Optional<User> register(RegisterRequest request) {
 
         if(userRepository.findByEmail(request.getEmail()).isPresent()){
+            System.out.println("Email already in use");
+            return Optional.empty();
+        }
+
+        //invalid email address pattern
+        if(!request.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+            System.out.println("Invalid email pattern");
             return Optional.empty();
         }
 
         User newUser = new User();
         newUser.setEmail(request.getEmail());
-        newUser.setPasswordHash(request.getPassword());
+        newUser.setPassword(request.getPassword());
         newUser.setDisplayName(request.getDisplayName());
 
         User savedUser = userRepository.save(newUser);

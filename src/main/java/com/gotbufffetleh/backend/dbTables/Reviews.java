@@ -1,6 +1,7 @@
 package com.gotbufffetleh.backend.dbTables;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,36 +29,46 @@ public class Reviews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private int reviewId;
+    private long reviewId;
 
     @Column(name = "user_id", nullable = false)
-    private int userId;
+    private long userId;
+
+    @Column(name = "menu_id", nullable = false)
+    private long menuId;
 
     @Column(name = "caterer_id", nullable = false)
-    private int catererId;
+    private long catererId;
 
     @Column(name = "descript")
-    private String descript;
+    private String description;
 
     @Column(name = "rating")
-    private double rating;
+    private int rating;
 
-    @Column(name = "amazing_taste")
+    @Column(name = "is_amazing_taste")
     private int amazingTaste;
 
-    @Column(name = "value_for_money")
+    @Column(name = "is_value_for_money")
     private int valueForMoney;
 
     @Column(name = "review_date")
     private Date reviewDate;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false, updatable = false,  insertable = false)
     private User user;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "caterer_id", nullable = false,insertable = false, updatable = false)
     private Caterers caterer;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "menu_id",nullable = false,insertable = false,updatable = false)
+    private Menu menu;
 
 
 }
