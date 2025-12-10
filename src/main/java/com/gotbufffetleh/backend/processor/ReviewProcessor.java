@@ -39,7 +39,6 @@ public class ReviewProcessor {
         }
         return dtoList;
 
-
     }
 
     public List<ReviewRequest>getReviewsFromCatererId(long catererId) {
@@ -65,9 +64,12 @@ public class ReviewProcessor {
         }
         return dtoList;
 
-
     }
 
+    public void delete(long reviewId) {
+        this.reviewRepository.deleteByReviewId(reviewId);
+
+    }
 
 
 
