@@ -4,14 +4,12 @@ import com.gotbufffetleh.backend.dbTables.Reviews;
 import com.gotbufffetleh.backend.dto.ReviewRequest;
 import com.gotbufffetleh.backend.processor.ReviewProcessor;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
-import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +75,6 @@ public class ReviewController {
 //        "valueForMoney": 1
 //
 //    }
-
 
     @PutMapping("/edit/{reviewId}")
     public ResponseEntity<?> editReview(@PathVariable(value = "reviewId") Long reviewId, @RequestParam("userId") Long currentUserId, @RequestBody Reviews review){

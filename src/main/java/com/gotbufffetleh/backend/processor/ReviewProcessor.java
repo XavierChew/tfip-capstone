@@ -3,12 +3,12 @@ package com.gotbufffetleh.backend.processor;
 import com.gotbufffetleh.backend.dbTables.Reviews;
 import com.gotbufffetleh.backend.dto.ReviewRequest;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 public class ReviewProcessor {
     private final ReviewRepository reviewRepository;
 
@@ -33,6 +33,7 @@ public class ReviewProcessor {
             dto.setCatererId(review.getCaterer().getCatererId());
             dto.setDisplayName(review.getUser().getDisplayName());
             dto.setCatererName(review.getCaterer().getCatererName());
+            dto.setMenuName(review.getMenu().getMenuName());
 
 
             dtoList.add(dto);
@@ -58,6 +59,7 @@ public class ReviewProcessor {
             dto.setCatererId(review.getCaterer().getCatererId());
             dto.setDisplayName(review.getUser().getDisplayName());
             dto.setCatererName(review.getCaterer().getCatererName());
+            dto.setMenuName(review.getMenu().getMenuName());
 
 
             dtoList.add(dto);

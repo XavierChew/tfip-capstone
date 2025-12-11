@@ -18,4 +18,5 @@ public class ReviewRequest {
     private String displayName;
     private Long catererId;
     private String catererName;
+    private String menuName;
 }

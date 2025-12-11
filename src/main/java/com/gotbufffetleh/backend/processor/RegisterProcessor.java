@@ -4,11 +4,11 @@ package com.gotbufffetleh.backend.processor;
 import com.gotbufffetleh.backend.dbTables.User;
 import com.gotbufffetleh.backend.dto.RegisterRequest;
 import com.gotbufffetleh.backend.repositories.UserRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 public class RegisterProcessor {
     private final UserRepository userRepository;
 
