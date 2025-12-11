@@ -27,6 +27,8 @@ public class ReviewController {
         this.reviewRepository = reviewRepository;
     }
 
+
+
     @GetMapping("/reviewsByUser")
     public List<ReviewRequest> getReviewsByUser(@RequestParam("userId") long userId){
         List<ReviewRequest> reviews = this.reviewProcessor.getReviewsFromUserId(userId);
@@ -40,7 +42,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/delete")
-    ResponseEntity<?> deleteReview(@RequestParam("reviewId") Long reviewId,
+    public ResponseEntity<?> deleteReview(@RequestParam("reviewId") Long reviewId,
                                    @RequestParam("userId") Long currentUserId) {
 
         Optional<Reviews> reviewOpt = reviewRepository.findById(reviewId);
@@ -62,4 +64,46 @@ public class ReviewController {
             return new ResponseEntity<>("Failed to delete review due to server error.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // Example of JSON RequestBody reviewId = 2, userId = 3
+//    {
+//        "description" : "so-so only",
+//            "reviewDate": "2025-12-11",
+//            "rating": 5,
+//            "amazingTaste": 1,
+//            "valueForMoney": 1
+//    }
+
+
+    @PutMapping("/edit/{reviewId}")
+    public ResponseEntity<?> editReview(@PathVariable(value = "reviewId") Long reviewId, @RequestParam("userId") Long currentUserId, @RequestBody Reviews review){
+        Optional<Reviews> reviewsOpt =  reviewRepository.findById(reviewId);
+
+        if(reviewsOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Reviews reviewToEdit = reviewsOpt.get();
+        if(reviewToEdit.getUser().getUserId() != currentUserId) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        reviewToEdit.setDescription(review.getDescription());
+        reviewToEdit.setReviewDate(review.getReviewDate());
+        reviewToEdit.setAmazingTaste(review.getAmazingTaste());
+        reviewToEdit.setValueForMoney(review.getValueForMoney());
+        reviewToEdit.setRating(review.getRating());
+
+        try {
+            Reviews savedReview = reviewRepository.save(reviewToEdit);
+            return ResponseEntity.ok(savedReview);
+        } catch (Exception e){
+            System.err.println("Error editing review ID " + reviewId + ": " + e.getMessage());
+            return new ResponseEntity<>("Failed to edit review due to server error.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+
 }

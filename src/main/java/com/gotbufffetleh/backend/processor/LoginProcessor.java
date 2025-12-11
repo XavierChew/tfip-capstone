@@ -16,6 +16,8 @@ public class LoginProcessor {
     }
 
 
+
+    // rmb to throw exception
     public User login(String email, String password ) {
         return userRepository.findByEmail(email).map(user -> {
             if (user.getPassword().equals(password)){

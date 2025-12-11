@@ -15,5 +15,8 @@ public interface ReviewRepository extends JpaRepository<Reviews, Long> {
     @Query("SELECT r FROM Reviews r WHERE r.caterer.catererId = :catererId")
     List<Reviews> findByCatererId(@Param("catererId") long catererId);
 
-    Reviews deleteByReviewId(long reviewId);
+    @Query("SELECT COUNT(r) FROM Reviews r WHERE r.catererId = :catererId")
+    int countReviewByCatererId(@Param("catererId") long catererId);
+
+    void deleteByReviewId(long reviewId);
 }
