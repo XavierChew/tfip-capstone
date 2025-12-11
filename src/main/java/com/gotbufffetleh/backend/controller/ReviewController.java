@@ -18,13 +18,12 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ReviewController {
     private final ReviewProcessor reviewProcessor;
-    private final ReviewRepository reviewRepository;
+
 
 
     //autowire
-    public ReviewController(ReviewProcessor reviewProcessor, ReviewRepository reviewRepository) {
+    public ReviewController(ReviewProcessor reviewProcessor) {
         this.reviewProcessor = reviewProcessor;
-        this.reviewRepository = reviewRepository;
     }
 
 
@@ -62,6 +61,24 @@ public class ReviewController {
 
     }
 
+
+    @PostMapping("/add")
+    public ResponseEntity<?> addReview(@RequestBody Reviews review) {
+
+        if(review.getUser() == null || review.getCaterer() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Reviews> savedReview = this.reviewProcessor.addReview(review);
+        if(savedReview.isPresent()) {
+            return ResponseEntity.ok(savedReview.get());
+        }
+            return ResponseEntity.badRequest().build();
+
+        }
+
+    }
+
     // Example of JSON RequestBody reviewId = 2, userId = 3
 //    {
 //        "reviewId": 2,
@@ -73,33 +90,33 @@ public class ReviewController {
 //
 //    }
 
-    @PutMapping("/edit/{reviewId}")
-    public ResponseEntity<?> editReview(@PathVariable(value = "reviewId") Long reviewId, @RequestParam("userId") Long currentUserId, @RequestBody Reviews review){
-        Optional<Reviews> reviewsOpt =  reviewRepository.findById(reviewId);
-
-        if(reviewsOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Reviews reviewToEdit = reviewsOpt.get();
-        if(reviewToEdit.getUser().getUserId() != currentUserId) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        reviewToEdit.setDescription(review.getDescription());
-        reviewToEdit.setAmazingTaste(review.getAmazingTaste());
-        reviewToEdit.setValueForMoney(review.getValueForMoney());
-        reviewToEdit.setRating(review.getRating());
-        reviewToEdit.setUpdatedAt(LocalDateTime.now());
-
-        try {
-            Reviews savedReview = reviewRepository.save(reviewToEdit);
-            return ResponseEntity.ok(savedReview);
-        } catch (Exception e){
-            System.err.println("Error editing review ID " + reviewId + ": " + e.getMessage());
-            return new ResponseEntity<>("Failed to edit review due to server error.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//    @PutMapping("/edit/{reviewId}")
+//    public ResponseEntity<?> editReview(@PathVariable(value = "reviewId") Long reviewId, @RequestParam("userId") Long currentUserId, @RequestBody Reviews review){
+//        Optional<Reviews> reviewsOpt =  reviewRepository.findById(reviewId);
+//
+//        if(reviewsOpt.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        Reviews reviewToEdit = reviewsOpt.get();
+//        if(reviewToEdit.getUser().getUserId() != currentUserId) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        reviewToEdit.setDescription(review.getDescription());
+//        reviewToEdit.setAmazingTaste(review.getAmazingTaste());
+//        reviewToEdit.setValueForMoney(review.getValueForMoney());
+//        reviewToEdit.setRating(review.getRating());
+//        reviewToEdit.setUpdatedAt(LocalDateTime.now());
+//
+//        try {
+//            Reviews savedReview = reviewRepository.save(reviewToEdit);
+//            return ResponseEntity.ok(savedReview);
+//        } catch (Exception e){
+//            System.err.println("Error editing review ID " + reviewId + ": " + e.getMessage());
+//            return new ResponseEntity<>("Failed to edit review due to server error.",
+//                    HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
 
     }
 
