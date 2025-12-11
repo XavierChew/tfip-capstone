@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,11 +69,13 @@ public class ReviewController {
 
     // Example of JSON RequestBody reviewId = 2, userId = 3
 //    {
-//        "description" : "so-so only",
-//            "reviewDate": "2025-12-11",
-//            "rating": 5,
-//            "amazingTaste": 1,
-//            "valueForMoney": 1
+//        "reviewId": 2,
+//        "userId": 3,
+//        "description" : "nubbad",
+//        "rating": 5,
+//        "amazingTaste": 1,
+//        "valueForMoney": 1
+//
 //    }
 
 
@@ -89,10 +93,10 @@ public class ReviewController {
         }
 
         reviewToEdit.setDescription(review.getDescription());
-        reviewToEdit.setReviewDate(review.getReviewDate());
         reviewToEdit.setAmazingTaste(review.getAmazingTaste());
         reviewToEdit.setValueForMoney(review.getValueForMoney());
         reviewToEdit.setRating(review.getRating());
+        reviewToEdit.setReviewDate(LocalDateTime.now());
 
         try {
             Reviews savedReview = reviewRepository.save(reviewToEdit);

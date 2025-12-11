@@ -1,7 +1,9 @@
 package com.gotbufffetleh.backend.dto;
 
 import lombok.Data;
-import java.util.Date;
+
+import java.time.LocalDateTime;
+
 
 @Data
 public class ReviewRequest {
@@ -11,7 +13,7 @@ public class ReviewRequest {
     private int rating;
     private int amazingTaste;
     private int valueForMoney;
-    private Date reviewDate;
+    private LocalDateTime reviewDate;
     private Long userId;
     private String displayName;
     private Long catererId;

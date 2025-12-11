@@ -16,7 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @Setter
 @Getter
@@ -53,7 +54,7 @@ public class Reviews {
     private int valueForMoney;
 
     @Column(name = "review_date")
-    private Date reviewDate;
+    private LocalDateTime reviewDate;
 
     @ManyToOne
     @JsonIgnore
