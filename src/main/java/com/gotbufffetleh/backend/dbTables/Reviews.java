@@ -53,8 +53,11 @@ public class Reviews {
     @Column(name = "is_value_for_money")
     private int valueForMoney;
 
-    @Column(name = "review_date")
-    private LocalDateTime reviewDate;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JsonIgnore

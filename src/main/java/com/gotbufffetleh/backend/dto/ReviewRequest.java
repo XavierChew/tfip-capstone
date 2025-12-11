@@ -13,10 +13,11 @@ public class ReviewRequest {
     private int rating;
     private int amazingTaste;
     private int valueForMoney;
-    private LocalDateTime reviewDate;
     private Long userId;
     private String displayName;
     private Long catererId;
     private String catererName;
     private String menuName;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

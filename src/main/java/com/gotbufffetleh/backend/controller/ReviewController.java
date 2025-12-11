@@ -45,24 +45,21 @@ public class ReviewController {
     public ResponseEntity<?> deleteReview(@RequestParam("reviewId") Long reviewId,
                                    @RequestParam("userId") Long currentUserId) {
 
-        Optional<Reviews> reviewOpt = reviewRepository.findById(reviewId);
-        if(reviewOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Reviews reviewToDelete = reviewOpt.get();
+        int result = this.reviewProcessor.deleteReviewById(reviewId,currentUserId);
 
-        if(reviewToDelete.getUser().getUserId() != currentUserId) {
-            return ResponseEntity.badRequest().build();
+        switch (result){
+            case 0 :
+                return ResponseEntity.noContent().build();
+            case -1 :
+                return ResponseEntity.notFound().build();
+
+            case -2 :
+                return ResponseEntity.badRequest().build();
+
+            default:
+                return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        try{
-            reviewRepository.deleteById(reviewId);
-
-            return ResponseEntity.ok().build();
-        } catch (Exception e){
-            System.err.println("Error deleting review ID " + reviewId + ": " + e.getMessage());
-            return new ResponseEntity<>("Failed to delete review due to server error.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     // Example of JSON RequestBody reviewId = 2, userId = 3
@@ -93,7 +90,7 @@ public class ReviewController {
         reviewToEdit.setAmazingTaste(review.getAmazingTaste());
         reviewToEdit.setValueForMoney(review.getValueForMoney());
         reviewToEdit.setRating(review.getRating());
-        reviewToEdit.setReviewDate(LocalDateTime.now());
+        reviewToEdit.setUpdatedAt(LocalDateTime.now());
 
         try {
             Reviews savedReview = reviewRepository.save(reviewToEdit);
