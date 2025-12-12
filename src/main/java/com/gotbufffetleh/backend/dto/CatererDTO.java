@@ -22,6 +22,8 @@ public class CatererDTO {
         private int advanceOrder;
         private int numOfReviews;
 
+        private GetReviewDTO reviewDTO;
+
 
 
 

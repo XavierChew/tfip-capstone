@@ -185,6 +185,7 @@ public class ReviewProcessor {
                 return Optional.empty();
             }
             reviewToEdit.setMenu(newMenuOpt.get());
+            reviewToEdit.setMenuId(newMenuId);
         }
 
             reviewToEdit.setDescription(updatedDetails.getDescription());
