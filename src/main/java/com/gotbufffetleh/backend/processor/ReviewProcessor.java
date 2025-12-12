@@ -108,7 +108,9 @@ public class ReviewProcessor {
 
     }
 
+    // helper mapping method
     private GetReviewDTO mapToResponseDTO(Reviews review) {
+
         GetReviewDTO dto = new GetReviewDTO();
 
         dto.setReviewId(review.getReviewId());
@@ -116,6 +118,8 @@ public class ReviewProcessor {
         dto.setRating(review.getRating());
         dto.setAmazingTaste(review.getAmazingTaste());
         dto.setValueForMoney(review.getValueForMoney());
+        dto.setCreatedAt(review.getCreatedAt());
+        dto.setUpdatedAt(review.getUpdatedAt());
 
 
         if (review.getUser() != null) {
@@ -145,7 +149,7 @@ public class ReviewProcessor {
 
         Reviews optReview = review.get();
 
-        if(optReview.getUser().getUserId() != currentUserId) {
+        if(optReview.getUser().getUserId().equals(currentUserId)) {
             return -2;
         }
 
