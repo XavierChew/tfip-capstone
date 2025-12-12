@@ -73,46 +73,16 @@ public class ReviewController {
 
 
 
-    // Example of JSON RequestBody reviewId = 2, userId = 3
-//    {
-//        "reviewId": 2,
-//        "userId": 3,
-//        "description" : "nubbad",
-//        "rating": 5,
-//        "amazingTaste": 1,
-//        "valueForMoney": 1
-//
-//    }
+    @PutMapping("/edit")
+    public ResponseEntity<?> editReview(@RequestParam("reviewId") Long reviewId, @RequestParam("userId") Long currentUserId, @RequestBody AddReviewDTO editReviewDTO) {
 
-//    @PutMapping("/edit/{reviewId}")
-//    public ResponseEntity<?> editReview(@PathVariable(value = "reviewId") Long reviewId, @RequestParam("userId") Long currentUserId, @RequestBody Reviews review){
-//        Optional<Reviews> reviewsOpt =  reviewRepository.findById(reviewId);
-//
-//        if(reviewsOpt.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        Reviews reviewToEdit = reviewsOpt.get();
-//        if(reviewToEdit.getUser().getUserId() != currentUserId) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//
-//        reviewToEdit.setDescription(review.getDescription());
-//        reviewToEdit.setAmazingTaste(review.getAmazingTaste());
-//        reviewToEdit.setValueForMoney(review.getValueForMoney());
-//        reviewToEdit.setRating(review.getRating());
-//        reviewToEdit.setUpdatedAt(LocalDateTime.now());
-//
-//        try {
-//            Reviews savedReview = reviewRepository.save(reviewToEdit);
-//            return ResponseEntity.ok(savedReview);
-//        } catch (Exception e){
-//            System.err.println("Error editing review ID " + reviewId + ": " + e.getMessage());
-//            return new ResponseEntity<>("Failed to edit review due to server error.",
-//                    HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+        Optional<GetReviewDTO> editedReview = this.reviewProcessor.updateReview(reviewId, currentUserId, editReviewDTO);
 
-//    }
+        if (editedReview.isPresent()) {
+            return ResponseEntity.ok(editedReview.get());
+        }
+        return ResponseEntity.badRequest().build();
 
+    }
 
 }

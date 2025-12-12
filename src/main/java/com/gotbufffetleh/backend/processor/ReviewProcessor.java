@@ -44,6 +44,7 @@ public class ReviewProcessor {
 
     }
 
+    //helper method to get reviewList
     private List<GetReviewDTO> getReviewRequests(List<Reviews> reviews) {
         List<GetReviewDTO> dtoList = new ArrayList<>();
         for (Reviews review : reviews) {
@@ -149,7 +150,7 @@ public class ReviewProcessor {
 
         Reviews optReview = review.get();
 
-        if(optReview.getUser().getUserId().equals(currentUserId)) {
+        if(!optReview.getUser().getUserId().equals(currentUserId)) {
             return -2;
         }
 
@@ -163,5 +164,43 @@ public class ReviewProcessor {
 
 
     }
+
+    public Optional<GetReviewDTO> updateReview(Long reviewId, Long currentUserId, AddReviewDTO updatedDetails) {
+        Optional<Reviews> reviewOpt = this.reviewRepository.findById(reviewId);
+        if ( reviewOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        Reviews reviewToEdit = reviewOpt.get();
+        if(!reviewToEdit.getUser().getUserId().equals(currentUserId)) {
+          return Optional.empty();
+        }
+
+        Long newMenuId = updatedDetails.getMenuId();
+
+        //validate if there is any change in menu
+        if(!reviewToEdit.getMenu().getMenuId().equals(newMenuId)) {
+            Optional<Menu> newMenuOpt = this.menuRepository.findById(newMenuId);
+            if (newMenuOpt.isEmpty()) {
+                //invalid new menu
+                return Optional.empty();
+            }
+            reviewToEdit.setMenu(newMenuOpt.get());
+        }
+
+            reviewToEdit.setDescription(updatedDetails.getDescription());
+            reviewToEdit.setRating(updatedDetails.getRating());
+            reviewToEdit.setUpdatedAt(LocalDateTime.now());
+            reviewToEdit.setAmazingTaste(updatedDetails.getAmazingTaste());
+            reviewToEdit.setValueForMoney(updatedDetails.getValueForMoney());
+
+            Reviews editedReview = this.reviewRepository.save(reviewToEdit);
+
+            return Optional.of(mapToResponseDTO(editedReview));
+
+    }
+
+
+
+
 
 }

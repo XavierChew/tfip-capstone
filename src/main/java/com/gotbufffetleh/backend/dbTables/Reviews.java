@@ -66,12 +66,12 @@ public class Reviews {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "caterer_id", nullable = false, insertable = false, updatable = false)
     private Caterers caterer;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "menu_id", nullable = false, insertable = false, updatable = false)
     private Menu menu;
 
 
