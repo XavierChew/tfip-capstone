@@ -8,8 +8,7 @@ import org.springframework.data.repository.query.Param;
 public interface CatererRepository extends JpaRepository<Caterers, Long> {
 
 
-    @Query("SELECT AVG(r.rating) FROM Reviews r WHERE r.catererId = :catererId")
-    double getAvgRating(@Param("catererId") long catererId);
+
 
 
 

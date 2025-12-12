@@ -3,8 +3,11 @@ package com.gotbufffetleh.backend.controller;
 
 import com.gotbufffetleh.backend.dto.CatererDTO;
 import com.gotbufffetleh.backend.processor.CatererProcessor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/caterer")
@@ -18,10 +21,14 @@ public class CatererController {
     }
 
 
-//    @GetMapping("/catererPage")
-//    public ResponseEntity<CatererDTO> getCaterer(@RequestParam("catererId") long catererId) {
-//
-//        CatererDTO caterer = this.catererProcessor.findByCatererId(catererId);
-//
-//    }
+    @GetMapping("/catererPage")
+    public ResponseEntity<CatererDTO> getCaterer(@RequestParam("catererId") long catererId) {
+
+        Optional<CatererDTO> caterer = this.catererProcessor.findByCatererId(catererId);
+        if (caterer.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(caterer.get(), HttpStatus.OK);
+
+    }
 }

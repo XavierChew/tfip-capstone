@@ -34,7 +34,24 @@ public class CatererProcessor {
 
     // helper method to get avgRating
     public double avgRating(Long catererId) {
-        return this.catererRepository.getAvgRating(catererId);
+        return this.reviewRepository.getAvgRating(catererId);
+    }
+//    helper method to get isAmazingTaste
+    public int isAmazingTaste(Long catererId) {
+        final int threshold = reviewRepository.countNumOfAmazingTaste(catererId)/2;
+        if(reviewRepository.countNumOfAmazingTaste(catererId) > threshold) {
+            return 1;
+        }
+        return 0;
+    }
+
+    //    helper method to get isValueForMoney
+    public int isValueMoney(Long catererId) {
+        final int threshold = reviewRepository.countNumOfValueMoney(catererId)/2;
+        if(reviewRepository.countNumOfValueMoney(catererId) > threshold) {
+            return 1;
+        }
+        return 0;
     }
 
     //helper method to get is isTopRated
@@ -63,6 +80,8 @@ public class CatererProcessor {
         dto.setCatererId(catererEntity.getCatererId());
         dto.setCatererName(catererEntity.getCatererName());
         dto.setIsTopRated(isTopRated(catererEntity.getCatererId()));
+        dto.setIsAmazingTaste(isValueMoney(catererEntity.getCatererId()));
+        dto.setIsValueForMoney(isValueMoney(catererEntity.getCatererId()));
         dto.setNumOfReviews(numOfReviews(catererEntity.getCatererId()));
         dto.setAvgRating(avgRating(catererEntity.getCatererId()));
         dto.setAddress(catererEntity.getAddress());
