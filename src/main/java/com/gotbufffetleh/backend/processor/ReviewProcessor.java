@@ -1,10 +1,13 @@
 package com.gotbufffetleh.backend.processor;
 
 import com.gotbufffetleh.backend.dbTables.Caterers;
+import com.gotbufffetleh.backend.dbTables.Menu;
 import com.gotbufffetleh.backend.dbTables.Reviews;
 import com.gotbufffetleh.backend.dbTables.User;
-import com.gotbufffetleh.backend.dto.ReviewRequest;
+import com.gotbufffetleh.backend.dto.AddReviewDTO;
+import com.gotbufffetleh.backend.dto.GetReviewDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
+import com.gotbufffetleh.backend.repositories.MenuRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,49 +22,36 @@ public class ReviewProcessor {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final CatererRepository catererRepository;
+    private final MenuRepository menuRepository;
 
-    public ReviewProcessor(ReviewRepository reviewRepository,  UserRepository userRepository, CatererRepository catererRepository) {
+    public ReviewProcessor(ReviewRepository reviewRepository,  UserRepository userRepository,
+                           CatererRepository catererRepository, MenuRepository menuRepository) {
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
         this.catererRepository = catererRepository;
+        this.menuRepository = menuRepository;
     }
 
-    public List<ReviewRequest>getReviewsFromUserId(long userId) {
+    public List<GetReviewDTO>getReviewsFromUserId(long userId) {
         List<Reviews> reviews = this.reviewRepository.findByUserId(userId);
-        List<ReviewRequest> dtoList = new ArrayList<>();
-        for (Reviews review : reviews) {
-
-            ReviewRequest dto = new ReviewRequest();
-
-            dto.setReviewId(review.getReviewId());
-            dto.setDescript(review.getDescription());
-            dto.setRating(review.getRating());
-            dto.setAmazingTaste(review.getAmazingTaste());
-            dto.setValueForMoney(review.getValueForMoney());
-            dto.setCreatedAt(review.getCreatedAt());
-            dto.setUpdatedAt(review.getUpdatedAt());
-            dto.setUserId(review.getUser().getUserId());
-            dto.setCatererId(review.getCaterer().getCatererId());
-            dto.setDisplayName(review.getUser().getDisplayName());
-            dto.setCatererName(review.getCaterer().getCatererName());
-            dto.setMenuName(review.getMenu().getMenuName());
-
-
-            dtoList.add(dto);
-        }
-        return dtoList;
+        return getReviewRequests(reviews);
 
     }
 
-    public List<ReviewRequest>getReviewsFromCatererId(long catererId) {
+    public List<GetReviewDTO>getReviewsFromCatererId(long catererId) {
         List<Reviews> reviews = this.reviewRepository.findByCatererId(catererId);
-        List<ReviewRequest> dtoList = new ArrayList<>();
+        return getReviewRequests(reviews);
+
+    }
+
+    private List<GetReviewDTO> getReviewRequests(List<Reviews> reviews) {
+        List<GetReviewDTO> dtoList = new ArrayList<>();
         for (Reviews review : reviews) {
 
-            ReviewRequest dto = new ReviewRequest();
+            GetReviewDTO dto = new GetReviewDTO();
 
             dto.setReviewId(review.getReviewId());
-            dto.setDescript(review.getDescription());
+            dto.setDescription(review.getDescription());
             dto.setRating(review.getRating());
             dto.setAmazingTaste(review.getAmazingTaste());
             dto.setValueForMoney(review.getValueForMoney());
@@ -77,36 +67,73 @@ public class ReviewProcessor {
             dtoList.add(dto);
         }
         return dtoList;
-
     }
 
-    public Optional<Reviews> addReview(Reviews newReview) {
+
+
+    public Optional<GetReviewDTO> addReview(AddReviewDTO newReviewDTO) {
 
         //validate user and caterer
-        Long userId = newReview.getUser().getUserId();
-        Long catererId = newReview.getCaterer().getCatererId();
+        Optional<User> userOpt = this.userRepository.findById(newReviewDTO.getUserId());
+        Optional<Caterers> catererOpt = this.catererRepository.findById(newReviewDTO.getCatererId());
+        Optional<Menu> menuOpt = this.menuRepository.findById(newReviewDTO.getMenuId());
 
-
-        Optional<User> userOpt = this.userRepository.findById(userId);
-        Optional<Caterers> catererOpt = this.catererRepository.findById(catererId);
-
-        if(userOpt.isEmpty() || catererOpt.isEmpty()) {
+        if(userOpt.isEmpty() || catererOpt.isEmpty() ||  menuOpt.isEmpty()) {
             return Optional.empty();
         }
 
+        //Mapping the contents
+        Reviews  newReview = new Reviews();
+
+        newReview.setDescription(newReviewDTO.getDescription());
+        newReview.setRating(newReviewDTO.getRating());
+        newReview.setValueForMoney(newReviewDTO.getValueForMoney());
+        newReview.setAmazingTaste(newReviewDTO.getAmazingTaste());
+
+        newReview.setUserId(newReviewDTO.getUserId());
+        newReview.setCatererId(newReviewDTO.getCatererId());
+        newReview.setMenuId(newReviewDTO.getMenuId());
+
+
         newReview.setUser(userOpt.get());
         newReview.setCaterer(catererOpt.get());
+        newReview.setMenu(menuOpt.get());
 
-        if(newReview.getCreatedAt() == null) {
-            newReview.setCreatedAt(LocalDateTime.now());
-        }
-        if(newReview.getUpdatedAt() == null) {
-            newReview.setUpdatedAt(LocalDateTime.now());
-        }
+        newReview.setCreatedAt(LocalDateTime.now());
+        newReview.setUpdatedAt(LocalDateTime.now());
 
         Reviews savedReview = this.reviewRepository.save(newReview);
-        return Optional.of(savedReview);
 
+        return Optional.of(mapToResponseDTO(savedReview));
+
+    }
+
+    private GetReviewDTO mapToResponseDTO(Reviews review) {
+        GetReviewDTO dto = new GetReviewDTO();
+
+        dto.setReviewId(review.getReviewId());
+        dto.setDescription(review.getDescription());
+        dto.setRating(review.getRating());
+        dto.setAmazingTaste(review.getAmazingTaste());
+        dto.setValueForMoney(review.getValueForMoney());
+
+
+        if (review.getUser() != null) {
+            dto.setUserId(review.getUser().getUserId());
+            dto.setDisplayName(review.getUser().getDisplayName());
+        }
+
+        if (review.getCaterer() != null) {
+            dto.setCatererId(review.getCaterer().getCatererId());
+            dto.setCatererName(review.getCaterer().getCatererName());
+        }
+
+        if (review.getMenu() != null) {
+            dto.setMenuId(review.getMenu().getMenuId());
+            dto.setMenuName(review.getMenu().getMenuName());
+        }
+
+        return dto;
     }
 
     public int deleteReviewById(Long reviewId, Long currentUserId ) {

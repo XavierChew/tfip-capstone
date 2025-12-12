@@ -1,15 +1,13 @@
 package com.gotbufffetleh.backend.controller;
 
-import com.gotbufffetleh.backend.dbTables.Reviews;
-import com.gotbufffetleh.backend.dto.ReviewRequest;
+import com.gotbufffetleh.backend.dto.AddReviewDTO;
+import com.gotbufffetleh.backend.dto.GetReviewDTO;
 import com.gotbufffetleh.backend.processor.ReviewProcessor;
-import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,14 +27,14 @@ public class ReviewController {
 
 
     @GetMapping("/reviewsByUser")
-    public List<ReviewRequest> getReviewsByUser(@RequestParam("userId") long userId){
-        List<ReviewRequest> reviews = this.reviewProcessor.getReviewsFromUserId(userId);
+    public List<GetReviewDTO> getReviewsByUser(@RequestParam("userId") long userId){
+        List<GetReviewDTO> reviews = this.reviewProcessor.getReviewsFromUserId(userId);
         return reviews;
     }
 
     @GetMapping("/reviewsByCaterer")
-    public List<ReviewRequest> getReviewsByCaterer(@RequestParam("catererId") long catererId){
-        List<ReviewRequest> reviews = this.reviewProcessor.getReviewsFromCatererId(catererId);
+    public List<GetReviewDTO> getReviewsByCaterer(@RequestParam("catererId") long catererId){
+        List<GetReviewDTO> reviews = this.reviewProcessor.getReviewsFromCatererId(catererId);
         return reviews;
     }
 
@@ -63,21 +61,17 @@ public class ReviewController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<?> addReview(@RequestBody Reviews review) {
+    public ResponseEntity<?> addReview(@RequestBody AddReviewDTO newReviewDTO) {
 
-        if(review.getUser() == null || review.getCaterer() == null) {
-            return ResponseEntity.badRequest().build();
-        }
+        Optional<GetReviewDTO> savedReview = this.reviewProcessor.addReview(newReviewDTO);
 
-        Optional<Reviews> savedReview = this.reviewProcessor.addReview(review);
         if(savedReview.isPresent()) {
             return ResponseEntity.ok(savedReview.get());
         }
             return ResponseEntity.badRequest().build();
-
-        }
-
     }
+
+
 
     // Example of JSON RequestBody reviewId = 2, userId = 3
 //    {
@@ -118,7 +112,7 @@ public class ReviewController {
 //                    HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 
-    }
+//    }
 
 
 }

@@ -30,16 +30,16 @@ public class Reviews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private long reviewId;
+    private Long reviewId;
 
     @Column(name = "user_id", nullable = false)
-    private long userId;
+    private Long userId;
 
     @Column(name = "menu_id", nullable = false)
-    private long menuId;
+    private Long menuId;
 
     @Column(name = "caterer_id", nullable = false)
-    private long catererId;
+    private Long catererId;
 
     @Column(name = "descript")
     private String description;
@@ -61,17 +61,17 @@ public class Reviews {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false, updatable = false,  insertable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "caterer_id", nullable = false,insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private Caterers caterer;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "menu_id",nullable = false,insertable = false,updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private Menu menu;
 
 
