@@ -1,11 +1,82 @@
 package com.gotbufffetleh.backend.processor;
 
 
+import com.gotbufffetleh.backend.dbTables.Caterers;
+import com.gotbufffetleh.backend.dto.CatererDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
+import com.gotbufffetleh.backend.repositories.MenuRepository;
+import com.gotbufffetleh.backend.repositories.ReviewRepository;
+import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CatererProcessor {
-//    private final CatererRepository catererRepository;
-//    private
+    private final CatererRepository catererRepository;
+    private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
+    private final MenuRepository menuRepository;
+
+    public CatererProcessor(CatererRepository catererRepository, ReviewRepository reviewRepository,
+                            UserRepository userRepository, MenuRepository menuRepository) {
+        this.catererRepository = catererRepository;
+        this.reviewRepository = reviewRepository;
+        this.userRepository = userRepository;
+        this.menuRepository = menuRepository;
+    }
+
+    //helper method to get total reviews
+    public int numOfReviews(Long catererId) {
+
+        return this.reviewRepository.countReviewByCatererId(catererId);
+    }
+
+    // helper method to get avgRating
+    public double avgRating(Long catererId) {
+        return this.catererRepository.getAvgRating(catererId);
+    }
+
+    //helper method to get is isTopRated
+    public int isTopRated(Long catererId) {
+        final double threshold = 4.5;
+        if(avgRating(catererId) > threshold) {
+            return 1;
+        }
+        return 0;
+    }
+
+    //Get Caterer profile contents only
+
+    public Optional<CatererDTO> findByCatererId(long catererId) {
+
+        Optional<Caterers> catererOpt = this.catererRepository.findById(catererId);
+
+        if(catererOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Caterers catererEntity = catererOpt.get();
+        
+        CatererDTO dto = new CatererDTO();
+
+        dto.setCatererId(catererEntity.getCatererId());
+        dto.setCatererName(catererEntity.getCatererName());
+        dto.setIsTopRated(isTopRated(catererEntity.getCatererId()));
+        dto.setNumOfReviews(numOfReviews(catererEntity.getCatererId()));
+        dto.setAvgRating(avgRating(catererEntity.getCatererId()));
+        dto.setAddress(catererEntity.getAddress());
+        dto.setEmail(catererEntity.getEmail());
+        dto.setAdvanceOrder(catererEntity.getAdvanceOrder());
+        dto.setContactNo(catererEntity.getContactNo());
+        dto.setImageUrl(catererEntity.getImageUrl());
+        dto.setEmail(catererEntity.getEmail());
+        dto.setIsHalal(catererEntity.getIsHalal());
+        dto.setDeliveryOffer(catererEntity.getDeliveryOffer());
+
+
+        return Optional.of(dto);
+    }
+
+
 }
