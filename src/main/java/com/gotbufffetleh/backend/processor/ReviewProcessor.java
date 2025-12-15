@@ -63,6 +63,7 @@ public class ReviewProcessor {
             dto.setDisplayName(review.getUser().getDisplayName());
             dto.setCatererName(review.getCaterer().getCatererName());
             dto.setMenuName(review.getMenu().getMenuName());
+            dto.setMenuId(review.getMenu().getMenuId());
 
 
             dtoList.add(dto);

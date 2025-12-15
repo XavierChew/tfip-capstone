@@ -4,7 +4,6 @@ package com.gotbufffetleh.backend.processor;
 import com.gotbufffetleh.backend.dbTables.Caterers;
 import com.gotbufffetleh.backend.dto.CatererDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
-import com.gotbufffetleh.backend.repositories.MenuRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -15,15 +14,15 @@ import java.util.Optional;
 public class CatererProcessor {
     private final CatererRepository catererRepository;
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
-    private final MenuRepository menuRepository;
+    private final MenuProcessor menuProcessor;
+    private final ReviewProcessor reviewProcessor;
 
     public CatererProcessor(CatererRepository catererRepository, ReviewRepository reviewRepository,
-                            UserRepository userRepository, MenuRepository menuRepository) {
+                            MenuProcessor menuProcessor,  ReviewProcessor reviewProcessor) {
         this.catererRepository = catererRepository;
         this.reviewRepository = reviewRepository;
-        this.userRepository = userRepository;
-        this.menuRepository = menuRepository;
+        this.menuProcessor = menuProcessor;
+        this.reviewProcessor = reviewProcessor;
     }
 
     //helper method to get total reviews
@@ -80,7 +79,7 @@ public class CatererProcessor {
         dto.setCatererId(catererEntity.getCatererId());
         dto.setCatererName(catererEntity.getCatererName());
         dto.setIsTopRated(isTopRated(catererEntity.getCatererId()));
-        dto.setIsAmazingTaste(isValueMoney(catererEntity.getCatererId()));
+        dto.setIsAmazingTaste(isAmazingTaste(catererEntity.getCatererId()));
         dto.setIsValueForMoney(isValueMoney(catererEntity.getCatererId()));
         dto.setNumOfReviews(numOfReviews(catererEntity.getCatererId()));
         dto.setAvgRating(avgRating(catererEntity.getCatererId()));
@@ -92,7 +91,8 @@ public class CatererProcessor {
         dto.setEmail(catererEntity.getEmail());
         dto.setIsHalal(catererEntity.getIsHalal());
         dto.setDeliveryOffer(catererEntity.getDeliveryOffer());
-
+        dto.setReviews(this.reviewProcessor.getReviewsFromCatererId(catererEntity.getCatererId()));
+        dto.setMenus(this.menuProcessor.findMenusByCatererId(catererEntity.getCatererId()));
 
         return Optional.of(dto);
     }

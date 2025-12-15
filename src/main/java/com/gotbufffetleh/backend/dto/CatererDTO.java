@@ -4,6 +4,7 @@ package com.gotbufffetleh.backend.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class CatererDTO {
@@ -22,7 +23,8 @@ public class CatererDTO {
         private int advanceOrder;
         private int numOfReviews;
 
-        private GetReviewDTO reviewDTO;
+        private List<GetReviewDTO> reviews;
+        private List<GetMenuDTO> menus;
 
 
 
