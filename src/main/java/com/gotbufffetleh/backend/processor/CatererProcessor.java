@@ -8,7 +8,9 @@ import com.gotbufffetleh.backend.repositories.CatererRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -104,24 +106,55 @@ public class CatererProcessor {
 
         //https://medium.com/@ayoubtaouam/mastering-pagination-and-sorting-in-spring-boot-c2b64fd23467
 
-//        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers) {
-//            Long catererId = caterers.getCatererId();
-//            PaginatedCatererDTO dto = new PaginatedCatererDTO();
-//            dto.setCatererId(catererId);
-//            dto.setCatererName(caterers.getCatererName());
-//            dto.setIsTopRated(isTopRated(catererId));
-//            dto.setIsAmazingTaste(isAmazingTaste(catererId));
-//            dto.setIsValueForMoney(isValueMoney(catererId));
-//            dto.setIsHalal(caterers.getIsHalal());
-//            dto.setImageUrl(caterers.getImageUrl());
-//            dto.setAvgRating(avgRating(catererId));
-//            dto.setDeliveryOffer(caterers.getDeliveryOffer());
-//
-//
-//        }
-//        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable) {
-//
-//        }
+        //helper method to map the Entity to PaginatedCatererDTO
+        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers) {
+            Long catererId = caterers.getCatererId();
+            PaginatedCatererDTO dto = new PaginatedCatererDTO();
+            dto.setCatererId(catererId);
+            dto.setCatererName(caterers.getCatererName());
+            dto.setIsTopRated(isTopRated(catererId));
+            dto.setIsAmazingTaste(isAmazingTaste(catererId));
+            dto.setIsValueForMoney(isValueMoney(catererId));
+            dto.setIsHalal(caterers.getIsHalal());
+            dto.setImageUrl(caterers.getImageUrl());
+            dto.setAvgRating(avgRating(catererId));
+            dto.setDeliveryOffer(caterers.getDeliveryOffer());
+            dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+
+            return dto;
+
+        }
+
+        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable) {
+            Page<Caterers> caterersPage;
+            boolean isSortingByAvgRating = false;
+
+            if(pageable.getSort() != null){
+                for (Sort.Order order : pageable.getSort()) {
+                    if(order.getProperty().equals("avgRating")){
+                        isSortingByAvgRating = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isSortingByAvgRating){
+
+                Pageable unsortedPageable = removeSort(pageable);
+                caterersPage = catererRepository.findAllCaterersByAvgRating(unsortedPageable);}
+            else {
+                caterersPage = catererRepository.findAll(pageable);
+            }
+            return  caterersPage.map(this::mapToPaginatedCatererDTO);
+
+        }
+
+        //method to remove sort parameters
+        private Pageable removeSort(Pageable pageable) {
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        }
+
+
 
 
 

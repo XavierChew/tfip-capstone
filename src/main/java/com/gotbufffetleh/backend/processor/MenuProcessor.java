@@ -37,10 +37,26 @@ public class MenuProcessor {
             dto.setCostPerPax(menu.getCostPerPax());
             dto.setMinimumPax(menu.getMinimumPax());
             dto.setNumOfCourses(menu.getNoOfCourses());
-
             dtoList.add(dto);
         }
         return dtoList;
 
+    }
+
+    //helped method to get paginated view for menu
+    public List<GetMenuDTO> getMenusForPaginated(Long catererId){
+        List<GetMenuDTO> dtoList = new ArrayList<>();
+
+        for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
+            GetMenuDTO dto = new GetMenuDTO();
+            dto.setMenuId(menu.getMenuId());
+            dto.setMenuName(menu.getMenuName());
+            dto.setMinimumPax(menu.getMinimumPax());
+            dto.setNumOfCourses(menu.getNoOfCourses());
+            dto.setCostPerPax(menu.getCostPerPax());
+
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 }

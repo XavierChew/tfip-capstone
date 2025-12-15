@@ -37,11 +37,11 @@ public class CatererController {
 
     }
 
-//    @GetMapping("/allCaterers")
-//    public Page<PaginatedCatererDTO> getCaterers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
-//                                                 @RequestParam(defaultValue = "avgRating") String sortBy) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//        return catererProcessor.getAllCaterers(pageable);
-//
-//    }
+    @GetMapping("/allCaterers")
+    public Page<PaginatedCatererDTO> getCaterers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+                                                 @RequestParam(defaultValue = "avgRating") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return catererProcessor.getAllCaterers(pageable);
+
+    }
 }
