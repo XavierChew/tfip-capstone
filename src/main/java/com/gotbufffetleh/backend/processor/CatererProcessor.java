@@ -3,9 +3,12 @@ package com.gotbufffetleh.backend.processor;
 
 import com.gotbufffetleh.backend.dbTables.Caterers;
 import com.gotbufffetleh.backend.dto.CatererDTO;
+import com.gotbufffetleh.backend.dto.PaginatedCatererDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -92,13 +95,33 @@ public class CatererProcessor {
         dto.setIsHalal(catererEntity.getIsHalal());
         dto.setDeliveryOffer(catererEntity.getDeliveryOffer());
         dto.setDeliveryFee(catererEntity.getDeliveryFee());
+        dto.setWebsite(catererEntity.getWebsite());
         dto.setReviews(this.reviewProcessor.getReviewsFromCatererId(catererEntity.getCatererId()));
         dto.setMenus(this.menuProcessor.findMenusByCatererId(catererEntity.getCatererId()));
 
         return Optional.of(dto);
     }
 
+        //https://medium.com/@ayoubtaouam/mastering-pagination-and-sorting-in-spring-boot-c2b64fd23467
 
+//        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers) {
+//            Long catererId = caterers.getCatererId();
+//            PaginatedCatererDTO dto = new PaginatedCatererDTO();
+//            dto.setCatererId(catererId);
+//            dto.setCatererName(caterers.getCatererName());
+//            dto.setIsTopRated(isTopRated(catererId));
+//            dto.setIsAmazingTaste(isAmazingTaste(catererId));
+//            dto.setIsValueForMoney(isValueMoney(catererId));
+//            dto.setIsHalal(caterers.getIsHalal());
+//            dto.setImageUrl(caterers.getImageUrl());
+//            dto.setAvgRating(avgRating(catererId));
+//            dto.setDeliveryOffer(caterers.getDeliveryOffer());
+//
+//
+//        }
+//        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable) {
+//
+//        }
 
 
 

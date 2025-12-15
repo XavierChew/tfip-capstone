@@ -17,6 +17,7 @@ public class CatererDTO {
         private int isValueForMoney;
         private String contactNo;
         private String email;
+        private String website;
         private String address;
         private double avgRating;
         private String imageUrl;
