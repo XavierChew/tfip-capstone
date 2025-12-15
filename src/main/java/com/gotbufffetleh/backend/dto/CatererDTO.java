@@ -3,6 +3,7 @@ package com.gotbufffetleh.backend.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,9 +20,10 @@ public class CatererDTO {
         private String address;
         private double avgRating;
         private String imageUrl;
-        private int deliveryOffer;
+        private BigDecimal deliveryOffer;
         private int advanceOrder;
         private int numOfReviews;
+        private BigDecimal deliveryFee;
 
         private List<GetReviewDTO> reviews;
         private List<GetMenuDTO> menus;

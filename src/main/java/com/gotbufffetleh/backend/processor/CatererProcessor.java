@@ -8,6 +8,7 @@ import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -62,8 +63,7 @@ public class CatererProcessor {
         return 0;
     }
 
-    //Get Caterer profile contents only
-
+    //Get Caterer profile
     public Optional<CatererDTO> findByCatererId(long catererId) {
 
         Optional<Caterers> catererOpt = this.catererRepository.findById(catererId);
@@ -91,11 +91,15 @@ public class CatererProcessor {
         dto.setEmail(catererEntity.getEmail());
         dto.setIsHalal(catererEntity.getIsHalal());
         dto.setDeliveryOffer(catererEntity.getDeliveryOffer());
+        dto.setDeliveryFee(catererEntity.getDeliveryFee());
         dto.setReviews(this.reviewProcessor.getReviewsFromCatererId(catererEntity.getCatererId()));
         dto.setMenus(this.menuProcessor.findMenusByCatererId(catererEntity.getCatererId()));
 
         return Optional.of(dto);
     }
+
+
+
 
 
 }

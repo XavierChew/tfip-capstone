@@ -52,7 +52,10 @@ public class Caterers {
     private int isHalal;
 
     @Column(name = "delivery_offer")
-    private int deliveryOffer;
+    private BigDecimal deliveryOffer;
+
+    @Column(name = "delivery_fee")
+    private BigDecimal deliveryFee;
 
     @OneToMany(mappedBy = "caterer")
     private List<Reviews> reviewsList;
