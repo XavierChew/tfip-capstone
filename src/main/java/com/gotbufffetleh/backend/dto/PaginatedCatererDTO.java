@@ -13,6 +13,7 @@ public class PaginatedCatererDTO {
     private int isAmazingTaste;
     private int isValueForMoney;
     private int isHalal;
+    private String contactNo;
     private String imageUrl;
     private double avgRating;
     private int numOfReview;

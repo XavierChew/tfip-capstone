@@ -4,6 +4,7 @@ package com.gotbufffetleh.backend.processor;
 import com.gotbufffetleh.backend.dbTables.Caterers;
 import com.gotbufffetleh.backend.dto.CatererDTO;
 import com.gotbufffetleh.backend.dto.PaginatedCatererDTO;
+import com.gotbufffetleh.backend.dto.TopCatererDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,6 +71,37 @@ public class CatererProcessor {
         return 0;
     }
 
+    //Get Top 3 Caterers
+    public List<TopCatererDTO> findTop3CatererByAvgRating(){
+        Pageable top3Pageable = PageRequest.of(0, 3,Sort.unsorted());
+        Page<Caterers> topCatererPage = catererRepository.findAllCaterersByAvgRating(top3Pageable);
+        List<TopCatererDTO> dtoList = new ArrayList<>();
+        for  (Caterers caterers : topCatererPage.getContent()) {
+            dtoList.add(this.mapToTopCatererDTO(caterers));
+
+        }
+        return dtoList;
+    }
+
+    // helper method to map Entity to Top 3 PaginatedCatererDTO
+
+    private TopCatererDTO mapToTopCatererDTO(Caterers caterers){
+        Long catererId = caterers.getCatererId();
+        TopCatererDTO dto = new TopCatererDTO();
+        dto.setCatererId(catererId);
+        dto.setCatererName(caterers.getCatererName());
+        dto.setIsTopRated(isTopRated(catererId));
+        dto.setIsAmazingTaste(isAmazingTaste(catererId));
+        dto.setIsValueForMoney(isValueMoney(catererId));
+        dto.setNumOfReview(numOfReviews(catererId));
+        dto.setImageUrl(caterers.getImageUrl());
+        dto.setAvgRating(avgRating(catererId));
+        return dto;
+    }
+
+
+
+
     //Get Caterer profile
     public Optional<CatererDTO> findByCatererId(long catererId) {
 
@@ -120,6 +154,9 @@ public class CatererProcessor {
             dto.setAvgRating(avgRating(catererId));
             dto.setDeliveryOffer(caterers.getDeliveryOffer());
             dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+            dto.setNumOfReview(numOfReviews(catererId));
+            dto.setContactNo(caterers.getContactNo());
+
 
             return dto;
 
