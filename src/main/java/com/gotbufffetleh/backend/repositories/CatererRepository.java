@@ -19,7 +19,8 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
     Page<Caterers> findAllCaterersByAvgRating(Pageable pageable);
 
 
-
-
+    @Query(value = "SELECT c FROM Caterers c LEFT JOIN c.reviewsList r WHERE " +
+            "(:isHalal IS NULL OR c.isHalal = :isHalal) GROUP BY c ORDER BY coalesce( AVG(r.rating),0) DESC ")
+    Page<Caterers> findAllFilteredAndSorted(Pageable pageable, @Param("isHalal") Integer isHalal);
 
 }

@@ -8,10 +8,7 @@ import com.gotbufffetleh.backend.dto.TopCatererDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
 import com.gotbufffetleh.backend.repositories.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -44,31 +41,28 @@ public class CatererProcessor {
     public double avgRating(Long catererId) {
         return this.reviewRepository.getAvgRating(catererId);
     }
+
+
 //    helper method to get isAmazingTaste
-    public int isAmazingTaste(Long catererId) {
+    public boolean isAmazingTaste(Long catererId) {
         final int threshold = reviewRepository.countNumOfAmazingTaste(catererId)/2;
-        if(reviewRepository.countNumOfAmazingTaste(catererId) > threshold) {
-            return 1;
-        }
-        return 0;
+        return reviewRepository.countNumOfAmazingTaste(catererId) > threshold;
+
     }
 
     //    helper method to get isValueForMoney
-    public int isValueMoney(Long catererId) {
+    public boolean isValueMoney(Long catererId) {
         final int threshold = reviewRepository.countNumOfValueMoney(catererId)/2;
-        if(reviewRepository.countNumOfValueMoney(catererId) > threshold) {
-            return 1;
-        }
-        return 0;
+
+        return reviewRepository.countNumOfValueMoney(catererId) > threshold;
+
     }
 
     //helper method to get is isTopRated
-    public int isTopRated(Long catererId) {
+    public boolean isTopRated(Long catererId) {
         final double threshold = 4.5;
-        if(avgRating(catererId) > threshold) {
-            return 1;
-        }
-        return 0;
+        return avgRating(catererId) >= threshold;
+
     }
 
     //Get Top 3 Caterers
@@ -90,9 +84,9 @@ public class CatererProcessor {
         TopCatererDTO dto = new TopCatererDTO();
         dto.setCatererId(catererId);
         dto.setCatererName(caterers.getCatererName());
-        dto.setIsTopRated(isTopRated(catererId));
-        dto.setIsAmazingTaste(isAmazingTaste(catererId));
-        dto.setIsValueForMoney(isValueMoney(catererId));
+        dto.setTopRated(isTopRated(catererId));
+        dto.setAmazingTaste(isAmazingTaste(catererId));
+        dto.setValueForMoney(isValueMoney(catererId));
         dto.setNumOfReview(numOfReviews(catererId));
         dto.setImageUrl(caterers.getImageUrl());
         dto.setAvgRating(avgRating(catererId));
@@ -117,9 +111,9 @@ public class CatererProcessor {
 
         dto.setCatererId(catererEntity.getCatererId());
         dto.setCatererName(catererEntity.getCatererName());
-        dto.setIsTopRated(isTopRated(catererEntity.getCatererId()));
-        dto.setIsAmazingTaste(isAmazingTaste(catererEntity.getCatererId()));
-        dto.setIsValueForMoney(isValueMoney(catererEntity.getCatererId()));
+        dto.setTopRated(isTopRated(catererEntity.getCatererId()));
+        dto.setAmazingTaste(isAmazingTaste(catererEntity.getCatererId()));
+        dto.setValueForMoney(isValueMoney(catererEntity.getCatererId()));
         dto.setNumOfReviews(numOfReviews(catererEntity.getCatererId()));
         dto.setAvgRating(avgRating(catererEntity.getCatererId()));
         dto.setAddress(catererEntity.getAddress());
@@ -146,9 +140,9 @@ public class CatererProcessor {
             PaginatedCatererDTO dto = new PaginatedCatererDTO();
             dto.setCatererId(catererId);
             dto.setCatererName(caterers.getCatererName());
-            dto.setIsTopRated(isTopRated(catererId));
-            dto.setIsAmazingTaste(isAmazingTaste(catererId));
-            dto.setIsValueForMoney(isValueMoney(catererId));
+            dto.setTopRated(isTopRated(catererId));
+            dto.setAmazingTaste(isAmazingTaste(catererId));
+            dto.setValueForMoney(isValueMoney(catererId));
             dto.setIsHalal(caterers.getIsHalal());
             dto.setImageUrl(caterers.getImageUrl());
             dto.setAvgRating(avgRating(catererId));
@@ -156,14 +150,16 @@ public class CatererProcessor {
             dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
             dto.setNumOfReview(numOfReviews(catererId));
             dto.setContactNo(caterers.getContactNo());
+            dto.setDeliveryFee(caterers.getDeliveryFee());
 
 
             return dto;
 
         }
 
-        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable) {
-            Page<Caterers> caterersPage;
+        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable, Integer isHalal, Boolean isValueForMoney, Boolean isAmazingTaste) {
+
+            //Determine query type and Pageable Settings
             boolean isSortingByAvgRating = false;
 
             if(pageable.getSort() != null){
@@ -175,14 +171,46 @@ public class CatererProcessor {
                 }
             }
 
-            if (isSortingByAvgRating){
+            boolean useComplexQuery = isSortingByAvgRating || isHalal != null;
+            Pageable effectivePageable = isSortingByAvgRating ? removeSort(pageable) : pageable;
 
-                Pageable unsortedPageable = removeSort(pageable);
-                caterersPage = catererRepository.findAllCaterersByAvgRating(unsortedPageable);}
+            Page<Caterers> caterersPage;
+
+            if (useComplexQuery){
+
+                caterersPage = catererRepository.findAllFilteredAndSorted(effectivePageable, isHalal);}
             else {
                 caterersPage = catererRepository.findAll(pageable);
             }
-            return  caterersPage.map(this::mapToPaginatedCatererDTO);
+
+            List<Caterers> filteredContent = new ArrayList<>();
+
+            for (Caterers caterers : caterersPage.getContent()) {
+                Long catererId =  caterers.getCatererId();
+
+                boolean passesAmazingTaste = true;
+                boolean passesValueForMoney = true;
+
+                if(isAmazingTaste != null && isAmazingTaste ){
+                    passesAmazingTaste = isAmazingTaste(catererId);
+                }
+
+                if (isValueForMoney != null && isValueForMoney) {
+                    passesValueForMoney = isValueMoney(catererId);
+                }
+
+                if (passesAmazingTaste && passesValueForMoney) {
+                    filteredContent.add(caterers);
+                }
+            }
+
+            List<PaginatedCatererDTO> dtoList = new ArrayList<>();
+            for(Caterers caterers : filteredContent){
+                dtoList.add(mapToPaginatedCatererDTO(caterers));
+            }
+
+            //https://www.baeldung.com/spring-data-jpa-convert-list-page
+            return new PageImpl<>(dtoList,pageable,caterersPage.getTotalElements());
 
         }
 

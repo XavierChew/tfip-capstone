@@ -9,9 +9,9 @@ import java.util.List;
 public class PaginatedCatererDTO {
     private Long catererId;
     private String catererName;
-    private int isTopRated;
-    private int isAmazingTaste;
-    private int isValueForMoney;
+    private boolean isTopRated;
+    private boolean isAmazingTaste;
+    private boolean isValueForMoney;
     private int isHalal;
     private String contactNo;
     private String imageUrl;

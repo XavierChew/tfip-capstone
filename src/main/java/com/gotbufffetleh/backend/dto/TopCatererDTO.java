@@ -8,9 +8,9 @@ public class TopCatererDTO {
     private String catererName;
     private double avgRating;
     private int numOfReview;
-    private int isTopRated;
-    private int isValueForMoney;
-    private int isAmazingTaste;
+    private boolean isTopRated;
+    private boolean isValueForMoney;
+    private boolean isAmazingTaste;
     private String imageUrl;
 
 }
