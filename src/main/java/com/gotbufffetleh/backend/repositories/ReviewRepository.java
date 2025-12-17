@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Reviews, Long> {
 
-    @Query("SELECT r FROM Reviews r WHERE r.user.userId = :userId")
+    @Query("SELECT r FROM Reviews r WHERE r.user.userId = :userId ORDER BY r.updatedAt DESC")
     List<Reviews> findByUserId(@Param("userId") long userId);
 
-    @Query("SELECT r FROM Reviews r WHERE r.caterer.catererId = :catererId")
+    @Query("SELECT r FROM Reviews r WHERE r.caterer.catererId = :catererId ORDER BY r.updatedAt DESC")
     List<Reviews> findByCatererId(@Param("catererId") long catererId);
 
     @Query("SELECT COUNT(r) FROM Reviews r WHERE r.caterer.catererId = :catererId")
@@ -31,5 +31,7 @@ public interface ReviewRepository extends JpaRepository<Reviews, Long> {
 
     @Query("SELECT COUNT(r) FROM Reviews r WHERE r.caterer.catererId = :catererId")
     int countTotalReviews(@Param("catererId") long catererId);
+
+    boolean existsByMenuIdAndUserId(Long menuId, Long userId);
 
 }

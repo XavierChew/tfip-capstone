@@ -6,6 +6,7 @@ import com.gotbufffetleh.backend.dbTables.Reviews;
 import com.gotbufffetleh.backend.dbTables.User;
 import com.gotbufffetleh.backend.dto.AddReviewDTO;
 import com.gotbufffetleh.backend.dto.GetReviewDTO;
+import com.gotbufffetleh.backend.exception.DuplicateReviewException;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
 import com.gotbufffetleh.backend.repositories.MenuRepository;
 import com.gotbufffetleh.backend.repositories.ReviewRepository;
@@ -103,6 +104,11 @@ public class ReviewProcessor {
 
         newReview.setCreatedAt(LocalDateTime.now());
         newReview.setUpdatedAt(LocalDateTime.now());
+
+        // check if user already has an existing review for the menu
+        if (reviewRepository.existsByMenuIdAndUserId(newReviewDTO.getMenuId(), newReviewDTO.getUserId() )) {
+            throw new DuplicateReviewException("You have already reviewed this menu.");
+        }
 
         Reviews savedReview = this.reviewRepository.save(newReview);
 
