@@ -161,7 +161,6 @@ public class CatererProcessor {
 
             //Determine query type and Pageable Settings
             boolean isSortingByAvgRating = false;
-
             if(pageable.getSort() != null){
                 for (Sort.Order order : pageable.getSort()) {
                     if(order.getProperty().equals("avgRating")){
@@ -171,47 +170,14 @@ public class CatererProcessor {
                 }
             }
 
-            boolean useComplexQuery = isSortingByAvgRating || isHalal != null || minAvgRating != null;
             Pageable effectivePageable = isSortingByAvgRating ? removeSort(pageable) : pageable;
 
-            Page<Caterers> caterersPage;
 
-            if (useComplexQuery){
 
-                caterersPage = catererRepository.findAllFilteredAndSorted(effectivePageable, isHalal,  minAvgRating);}
-            else {
-                caterersPage = catererRepository.findAll(pageable);
-            }
+            Page<Caterers> caterersPage = catererRepository.findAllFilteredAndSorted(
+                    effectivePageable, isHalal, minAvgRating, isValueForMoney, isAmazingTaste);
 
-            List<Caterers> filteredContent = new ArrayList<>();
-
-            for (Caterers caterers : caterersPage.getContent()) {
-                Long catererId =  caterers.getCatererId();
-
-                boolean passesAmazingTaste = true;
-                boolean passesValueForMoney = true;
-
-                if(isAmazingTaste != null && isAmazingTaste ){
-                    passesAmazingTaste = isAmazingTaste(catererId);
-                }
-
-                if (isValueForMoney != null && isValueForMoney) {
-                    passesValueForMoney = isValueMoney(catererId);
-                }
-
-                if (passesAmazingTaste && passesValueForMoney) {
-                    filteredContent.add(caterers);
-                }
-            }
-
-            List<PaginatedCatererDTO> dtoList = new ArrayList<>();
-            for(Caterers caterers : filteredContent){
-                dtoList.add(mapToPaginatedCatererDTO(caterers));
-            }
-
-            //https://www.baeldung.com/spring-data-jpa-convert-list-page
-            return new PageImpl<>(dtoList,pageable,caterersPage.getTotalElements());
-
+            return caterersPage.map(this::mapToPaginatedCatererDTO);
         }
 
         //method to remove sort parameters
