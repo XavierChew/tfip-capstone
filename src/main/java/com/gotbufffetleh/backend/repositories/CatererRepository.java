@@ -21,9 +21,9 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
             "(:isHalal IS NULL OR c.isHalal = :isHalal) GROUP BY c  " +
             "HAVING (:minAvgRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minAvgRating) " +
             "AND (:isAmazingTaste IS NULL OR :isAmazingTaste = false OR " +
-            "SUM(CASE WHEN r.amazingTaste = 1 THEN 1 ELSE 0 END)>= (COUNT(r)/2))" +
+            "SUM(CASE WHEN r.amazingTaste = 1 THEN 1 ELSE 0 END)> (COUNT(r)/2))" +
             "AND (:isValueForMoney IS NULL OR :isValueForMoney = false OR " +
-            "SUM(CASE WHEN r.valueForMoney = 1 THEN 1 ELSE 0 END) >= (COUNT(r)/2))" +
+            "SUM(CASE WHEN r.valueForMoney = 1 THEN 1 ELSE 0 END) > (COUNT(r)/2))" +
             "ORDER BY coalesce( AVG(r.rating),0) DESC ")
 
     Page<Caterers> findAllFilteredAndSorted(Pageable pageable, @Param("isHalal") Integer isHalal,

@@ -45,6 +45,10 @@ public class CatererProcessor {
 //    helper method to get isAmazingTaste
     public boolean isAmazingTaste(Long catererId) {
          int threshold = reviewRepository.countTotalReviews(catererId)/2;
+
+         if (threshold == 0 && reviewRepository.countNumOfAmazingTaste(catererId) == threshold) {
+             return false;}
+
         return reviewRepository.countNumOfAmazingTaste(catererId) > threshold;
 
     }
@@ -53,7 +57,10 @@ public class CatererProcessor {
     public boolean isValueMoney(Long catererId) {
          int threshold = reviewRepository.countTotalReviews(catererId)/2;
 
-        return reviewRepository.countNumOfValueMoney(catererId) > threshold;
+        if (threshold == 0 && reviewRepository.countNumOfValueMoney(catererId) == threshold) {
+            return false;}
+
+        return reviewRepository.countNumOfValueMoney(catererId ) >threshold;
 
     }
 
