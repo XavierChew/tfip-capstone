@@ -44,7 +44,7 @@ public class CatererProcessor {
 
 //    helper method to get isAmazingTaste
     public boolean isAmazingTaste(Long catererId) {
-         int threshold = reviewRepository.countTotalReviews(catererId)/2;
+         double threshold = reviewRepository.countTotalReviews(catererId)/2.0;
 
          if (threshold == 0 && reviewRepository.countNumOfAmazingTaste(catererId) == threshold) {
              return false;}
@@ -55,7 +55,7 @@ public class CatererProcessor {
 
     //    helper method to get isValueForMoney
     public boolean isValueMoney(Long catererId) {
-         int threshold = reviewRepository.countTotalReviews(catererId)/2;
+         double threshold = reviewRepository.countTotalReviews(catererId)/2.0;
 
         if (threshold == 0 && reviewRepository.countNumOfValueMoney(catererId) == threshold) {
             return false;}
@@ -163,8 +163,11 @@ public class CatererProcessor {
 
         }
 
-        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable, Integer isHalal, Boolean isValueForMoney,
-                                                        Boolean isAmazingTaste, Double minAvgRating) {
+        public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable,
+                                                        Integer isHalal,
+                                                        Double minAvgRating,
+                                                        Boolean isAmazingTaste,
+                                                        Boolean isValueForMoney) {
 
             //Determine query type and Pageable Settings
             boolean isSortingByAvgRating = false;
@@ -182,7 +185,7 @@ public class CatererProcessor {
 
 
             Page<Caterers> caterersPage = catererRepository.findAllFilteredAndSorted(
-                    effectivePageable, isHalal, minAvgRating, isValueForMoney, isAmazingTaste);
+                    effectivePageable, isHalal, minAvgRating, isAmazingTaste, isValueForMoney);
 
             return caterersPage.map(this::mapToPaginatedCatererDTO);
         }

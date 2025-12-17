@@ -43,23 +43,25 @@ public class CatererController {
     public Page<PaginatedCatererDTO> getCaterers(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size,
                                                  @RequestParam(defaultValue = "avgRating") String sortBy,
                                                  @RequestParam(required = false) Integer isHalal,
-                                                 @RequestParam(required = false) boolean isValueForMoney,
+                                                 @RequestParam(required = false) Double minAvgRating,
                                                  @RequestParam(required = false) boolean isAmazingTaste,
-                                                 @RequestParam(required = false) Double minAvgRating
+                                                 @RequestParam(required = false) boolean isValueForMoney
+
                                                  ) {
-        int zeroIndexedPage = page -1;
+        int zeroIndexedPage = page - 1;
         if(zeroIndexedPage < 0) {
             zeroIndexedPage = 0;
         }
 
         Pageable pageable = PageRequest.of(zeroIndexedPage, size, Sort.by(sortBy));
-        return catererProcessor.getAllCaterers(pageable,isHalal,isValueForMoney,isAmazingTaste,minAvgRating);
+        return catererProcessor.getAllCaterers(pageable,isHalal,minAvgRating,isAmazingTaste,isValueForMoney);
 
     }
 
     @GetMapping("/top3Caterers")
-    public List<TopCatererDTO> getTop3Caterers(@RequestParam(defaultValue = "0")int page, @RequestParam(defaultValue = "3") int size,
-                                               @RequestParam(defaultValue = "avgRating")  String sortBy) {
+    public List<TopCatererDTO> getTop3Caterers(@RequestParam(defaultValue = "0")int page,
+                                               @RequestParam(defaultValue = "3") int size,
+                                               @RequestParam(defaultValue = "avgRating") String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return catererProcessor.findTop3CatererByAvgRating();
     }

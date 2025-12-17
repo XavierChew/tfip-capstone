@@ -17,20 +17,29 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
     Page<Caterers> findAllCaterersByAvgRating(Pageable pageable);
 
 
-    @Query(value = "SELECT c FROM Caterers c LEFT JOIN c.reviewsList r WHERE " +
-            "(:isHalal IS NULL OR c.isHalal = :isHalal) GROUP BY c  " +
+    @Query(value = "SELECT c FROM Caterers c LEFT JOIN c.reviewsList r " +
+            "WHERE (:isHalal IS NULL OR c.isHalal = :isHalal) " +
+            "GROUP BY c " +
             "HAVING (:minAvgRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minAvgRating) " +
             "AND (:isAmazingTaste IS NULL OR :isAmazingTaste = false OR " +
-            "SUM(CASE WHEN r.amazingTaste = 1 THEN 1 ELSE 0 END)> (COUNT(r)/2))" +
+            " (COUNT(r) > 0 AND COALESCE(SUM(CASE WHEN r.amazingTaste = 1 THEN 1 ELSE 0 END), 0) > (COUNT(r) / 2.0))) " +
             "AND (:isValueForMoney IS NULL OR :isValueForMoney = false OR " +
-            "SUM(CASE WHEN r.valueForMoney = 1 THEN 1 ELSE 0 END) > (COUNT(r)/2))" +
-            "ORDER BY coalesce( AVG(r.rating),0) DESC ")
+            " (COUNT(r) > 0 AND COALESCE(SUM(CASE WHEN r.valueForMoney = 1 THEN 1 ELSE 0 END), 0) > (COUNT(r) / 2.0))) " +
+            "ORDER BY COALESCE(AVG(r.rating), 0) DESC",
 
-    Page<Caterers> findAllFilteredAndSorted(Pageable pageable, @Param("isHalal") Integer isHalal,
+
+            countQuery = "SELECT COUNT(DISTINCT c.catererId) FROM Caterers c LEFT JOIN c.reviewsList r " +
+                    "WHERE (:isHalal IS NULL OR c.isHalal = :isHalal) " +
+                    "GROUP BY c.catererId " +
+                    "HAVING (:minAvgRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minAvgRating) " +
+                    "AND (:isAmazingTaste IS NULL OR :isAmazingTaste = false OR " +
+                    " (COUNT(r) > 0 AND COALESCE(SUM(CASE WHEN r.amazingTaste = 1 THEN 1 ELSE 0 END), 0) > (COUNT(r) / 2.0))) " +
+                    "AND (:isValueForMoney IS NULL OR :isValueForMoney = false OR " +
+                    " (COUNT(r) > 0 AND COALESCE(SUM(CASE WHEN r.valueForMoney = 1 THEN 1 ELSE 0 END), 0) > (COUNT(r) / 2.0)))")
+    Page<Caterers> findAllFilteredAndSorted(Pageable pageable,
+                                            @Param("isHalal") Integer isHalal,
                                             @Param("minAvgRating") Double minAvgRating,
                                             @Param("isAmazingTaste") Boolean isAmazingTaste,
                                             @Param("isValueForMoney") Boolean isValueForMoney);
-
-
 
 }
