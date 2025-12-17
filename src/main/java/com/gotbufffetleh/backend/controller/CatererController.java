@@ -40,14 +40,19 @@ public class CatererController {
     }
 
     @GetMapping("/allCaterers")
-    public Page<PaginatedCatererDTO> getCaterers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+    public Page<PaginatedCatererDTO> getCaterers(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size,
                                                  @RequestParam(defaultValue = "avgRating") String sortBy,
                                                  @RequestParam(required = false) Integer isHalal,
                                                  @RequestParam(required = false) boolean isValueForMoney,
                                                  @RequestParam(required = false) boolean isAmazingTaste,
                                                  @RequestParam(required = false) Double minAvgRating
                                                  ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        int zeroIndexedPage = page -1;
+        if(zeroIndexedPage < 0) {
+            zeroIndexedPage = 0;
+        }
+
+        Pageable pageable = PageRequest.of(zeroIndexedPage, size, Sort.by(sortBy));
         return catererProcessor.getAllCaterers(pageable,isHalal,isValueForMoney,isAmazingTaste,minAvgRating);
 
     }
