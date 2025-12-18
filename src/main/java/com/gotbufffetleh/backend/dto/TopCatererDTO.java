@@ -12,5 +12,5 @@ public class TopCatererDTO {
     private boolean isValueForMoney;
     private boolean isAmazingTaste;
     private String imageUrl;
-
+    private int isHalal;
 }

@@ -130,9 +130,6 @@ public class CatererProcessor {
     private TopCatererDTO mapToTopCatererDTO(Caterers caterers){
         Long catererId = caterers.getCatererId();
         TopCatererDTO dto = new TopCatererDTO();
-
-        // TODO: halal - something like dto.setIsHalal(caterers.getIsHalal());
-
         dto.setCatererId(catererId);
         dto.setCatererName(caterers.getCatererName());
         dto.setTopRated(isTopRated(catererId));
@@ -141,6 +138,7 @@ public class CatererProcessor {
         dto.setNumOfReview(numOfReviews(catererId));
         dto.setImageUrl(caterers.getImageUrl());
         dto.setAvgRating(avgRating(catererId));
+        dto.setIsHalal(caterers.getIsHalal());
         return dto;
     }
 
