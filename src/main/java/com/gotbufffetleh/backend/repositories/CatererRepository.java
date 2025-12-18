@@ -43,7 +43,7 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
                                             @Param("isValueForMoney") Boolean isValueForMoney);
 
 
-    @Query("SELECT c FROM Caterers c LEFT JOIN c.menuList m WHERE " +
+    @Query("SELECT DISTINCT c FROM Caterers c LEFT JOIN c.menuList m WHERE " +
         "LOWER(c.catererName) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
         "LOWER(m.menuName) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
         "LOWER(CAST(m.menuItems as String)) LIKE LOWER(CONCAT('%', :searchText, '%'))"
