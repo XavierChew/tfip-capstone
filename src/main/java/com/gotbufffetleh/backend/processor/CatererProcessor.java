@@ -83,11 +83,56 @@ public class CatererProcessor {
         return dtoList;
     }
 
+
+    // search results (page)
+    public Page<PaginatedCatererDTO> searchCaterersBySearchText(Pageable pageable, String searchText) {
+//Determine query type and Pageable Settings
+//        boolean isSortingByAvgRating = false;
+//        if(pageable.getSort() != null){
+//            for (Sort.Order order : pageable.getSort()) {
+//                if(order.getProperty().equals("avgRating")){
+//                    isSortingByAvgRating = true;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        Pageable effectivePageable = isSortingByAvgRating ? removeSort(pageable) : pageable;
+
+        Page<Caterers> caterersSearched = catererRepository.findCaterersBySearchText(pageable, searchText);
+        return caterersSearched.map(this::mapToSearchCaterersDTO);
+    }
+
+    // helper method to map Entity to Search CatererDTO
+    private PaginatedCatererDTO mapToSearchCaterersDTO(Caterers caterers){
+        Long catererId = caterers.getCatererId();
+
+        PaginatedCatererDTO dto = new PaginatedCatererDTO();
+        dto.setCatererId(catererId);
+        dto.setCatererName(caterers.getCatererName());
+        dto.setTopRated(isTopRated(catererId));
+        dto.setAmazingTaste(isAmazingTaste(catererId));
+        dto.setValueForMoney(isValueMoney(catererId));
+        dto.setIsHalal(caterers.getIsHalal());
+        dto.setImageUrl(caterers.getImageUrl());
+        dto.setAvgRating(avgRating(catererId));
+        dto.setDeliveryOffer(caterers.getDeliveryOffer());
+        dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+        dto.setNumOfReview(numOfReviews(catererId));
+        dto.setContactNo(caterers.getContactNo());
+        dto.setDeliveryFee(caterers.getDeliveryFee());
+
+        return dto;
+    }
+
     // helper method to map Entity to Top 3 PaginatedCatererDTO
 
     private TopCatererDTO mapToTopCatererDTO(Caterers caterers){
         Long catererId = caterers.getCatererId();
         TopCatererDTO dto = new TopCatererDTO();
+
+        // TODO: halal - something like dto.setIsHalal(caterers.getIsHalal());
+
         dto.setCatererId(catererId);
         dto.setCatererName(caterers.getCatererName());
         dto.setTopRated(isTopRated(catererId));

@@ -67,4 +67,24 @@ public class CatererController {
     }
 
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<PaginatedCatererDTO>> searchCaterers (
+                                                            @RequestParam(defaultValue = "1") int page,
+                                                            @RequestParam(defaultValue = "5") int size,
+                                                            @RequestParam String searchText) {
+    int zeroIndexedPage = page - 1;
+    if (zeroIndexedPage < 0) {
+        zeroIndexedPage = 0;
+    }
+    Pageable pageable = PageRequest.of(zeroIndexedPage, size);
+
+    Page<PaginatedCatererDTO> res = catererProcessor.searchCaterersBySearchText(pageable, searchText);
+
+    if (!res.isEmpty()) {
+        return ResponseEntity.ok(res);
+    } else {
+        return ResponseEntity.noContent().build();
+    }
+}
+
 }

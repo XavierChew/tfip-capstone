@@ -42,4 +42,12 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
                                             @Param("isAmazingTaste") Boolean isAmazingTaste,
                                             @Param("isValueForMoney") Boolean isValueForMoney);
 
+
+    @Query("SELECT c FROM Caterers c LEFT JOIN c.menuList m WHERE " +
+        "LOWER(c.catererName) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
+        "LOWER(m.menuName) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
+        "LOWER(CAST(m.menuItems as String)) LIKE LOWER(CONCAT('%', :searchText, '%'))"
+    )
+    Page<Caterers> findCaterersBySearchText(Pageable pageable, @Param("searchText") String searchText);
+
 }
