@@ -3,6 +3,8 @@ package com.gotbufffetleh.backend.processor;
 
 import com.gotbufffetleh.backend.dbTables.User;
 import com.gotbufffetleh.backend.dto.RegisterRequest;
+import com.gotbufffetleh.backend.exception.EmailAlreadyExistsException;
+import com.gotbufffetleh.backend.exception.InvalidEmailException;
 import com.gotbufffetleh.backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +21,17 @@ public class RegisterProcessor {
 
     public Optional<User> register(RegisterRequest request) {
 
-        if(userRepository.findByEmail(request.getEmail()).isPresent()){
-            System.out.println("Email already in use");
-            return Optional.empty();
-        }
-
         //invalid email address pattern
         if(!request.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
-            System.out.println("Invalid email pattern");
-            return Optional.empty();
+//            System.out.println("Invalid email pattern");
+//            return Optional.empty();
+            throw new InvalidEmailException("Invalid email pattern");
+        }
+
+        if(userRepository.findByEmail(request.getEmail()).isPresent()){
+//            System.out.println("Email already in use");
+//            return Optional.empty();
+            throw new EmailAlreadyExistsException("Email already in use");
         }
 
         User newUser = new User();

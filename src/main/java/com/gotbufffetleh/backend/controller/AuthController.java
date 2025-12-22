@@ -48,13 +48,14 @@ public AuthController(LoginProcessor loginProcessor, RegisterProcessor registerP
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
     Optional<User> registeredUser = registerProcessor.register(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully!");
 
-    if (registeredUser.isPresent()) {
-        return new ResponseEntity<>(registeredUser, HttpStatus.OK);
-    }
-    else {
-        return new ResponseEntity<>("Email is already registered", HttpStatus.UNAUTHORIZED);
-    }
+//    if (registeredUser.isPresent()) {
+//        return new ResponseEntity<>(registeredUser, HttpStatus.OK);
+//    }
+//    else {
+//        return new ResponseEntity<>("Email is already registered", HttpStatus.UNAUTHORIZED);
+//    }
 }
 
 

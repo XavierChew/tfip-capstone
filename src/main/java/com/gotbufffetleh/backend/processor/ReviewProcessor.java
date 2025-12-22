@@ -191,6 +191,12 @@ public class ReviewProcessor {
                 //invalid new menu
                 return Optional.empty();
             }
+
+            // check if user already has an existing review for the menu
+            if (reviewRepository.existsByMenuIdAndUserId(newMenuId, currentUserId )) {
+                throw new DuplicateReviewException("You have already reviewed this menu.");
+            }
+
             reviewToEdit.setMenu(newMenuOpt.get());
             reviewToEdit.setMenuId(newMenuId);
         }
