@@ -2,6 +2,7 @@ package com.gotbufffetleh.backend.controller;
 
 
 import com.gotbufffetleh.backend.dto.CatererDTO;
+import com.gotbufffetleh.backend.dto.CatererNameDTO;
 import com.gotbufffetleh.backend.dto.PaginatedCatererDTO;
 import com.gotbufffetleh.backend.dto.TopCatererDTO;
 import com.gotbufffetleh.backend.processor.CatererProcessor;
@@ -86,5 +87,12 @@ public class CatererController {
         return ResponseEntity.noContent().build();
     }
 }
+
+    @GetMapping("/dropdown")
+    public List<CatererNameDTO> getAllCatererNames() {
+         List<CatererNameDTO> list = catererProcessor.getCatererNames();
+
+         return list;
+    }
 
 }

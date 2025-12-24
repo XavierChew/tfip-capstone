@@ -5,6 +5,7 @@ import com.gotbufffetleh.backend.dbTables.Menu;
 import com.gotbufffetleh.backend.dbTables.Reviews;
 import com.gotbufffetleh.backend.dbTables.User;
 import com.gotbufffetleh.backend.dto.AddReviewDTO;
+import com.gotbufffetleh.backend.dto.CatererNameDTO;
 import com.gotbufffetleh.backend.dto.GetReviewDTO;
 import com.gotbufffetleh.backend.exception.DuplicateReviewException;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
@@ -212,9 +213,6 @@ public class ReviewProcessor {
             return Optional.of(mapToResponseDTO(editedReview));
 
     }
-
-
-
 
 
 }

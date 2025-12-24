@@ -3,6 +3,7 @@ package com.gotbufffetleh.backend.processor;
 
 import com.gotbufffetleh.backend.dbTables.Caterers;
 import com.gotbufffetleh.backend.dto.CatererDTO;
+import com.gotbufffetleh.backend.dto.CatererNameDTO;
 import com.gotbufffetleh.backend.dto.PaginatedCatererDTO;
 import com.gotbufffetleh.backend.dto.TopCatererDTO;
 import com.gotbufffetleh.backend.repositories.CatererRepository;
@@ -239,7 +240,16 @@ public class CatererProcessor {
         }
 
 
+        public List<CatererNameDTO> getCatererNames() {
+            List<CatererNameDTO> dtoList = new ArrayList<>();
 
-
+                for (Caterers caterers : catererRepository.findAll()) {
+                    CatererNameDTO dto = new CatererNameDTO();
+                    dto.setCatererName(caterers.getCatererName());
+                    dto.setCatererId(caterers.getCatererId());
+                    dtoList.add(dto);
+            }
+                return dtoList;
+        }
 
 }

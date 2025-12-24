@@ -1,12 +1,14 @@
 package com.gotbufffetleh.backend.repositories;
 
 import com.gotbufffetleh.backend.dbTables.Caterers;
+import com.gotbufffetleh.backend.dto.CatererNameDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 
 
 public interface CatererRepository extends JpaRepository<Caterers, Long> {
@@ -50,4 +52,6 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
     )
     Page<Caterers> findCaterersBySearchText(Pageable pageable, @Param("searchText") String searchText);
 
+//    @Query("SELECT c.catererId, c.catererName FROM Caterers c")
+//    List<CatererNameDTO> findCatererDropdownData();
 }
