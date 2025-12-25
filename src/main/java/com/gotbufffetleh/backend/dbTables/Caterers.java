@@ -2,13 +2,7 @@ package com.gotbufffetleh.backend.dbTables;
 
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,4 +57,7 @@ public class Caterers {
     @OneToMany(mappedBy = "caterer")
     private List<Menu> menuList;
 
+    @OneToOne
+    @JoinColumn(name = "caterer_id")
+    private CaterersFilterVars caterersFiltersVars;
 }

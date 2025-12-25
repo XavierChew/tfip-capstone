@@ -185,7 +185,7 @@ public class CatererProcessor {
         //https://medium.com/@ayoubtaouam/mastering-pagination-and-sorting-in-spring-boot-c2b64fd23467
 
         //helper method to map the Entity to PaginatedCatererDTO
-        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers) {
+        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers, Integer noOfPax) {
             Long catererId = caterers.getCatererId();
             PaginatedCatererDTO dto = new PaginatedCatererDTO();
             dto.setCatererId(catererId);
@@ -197,7 +197,16 @@ public class CatererProcessor {
             dto.setImageUrl(caterers.getImageUrl());
             dto.setAvgRating(avgRating(catererId));
             dto.setDeliveryOffer(caterers.getDeliveryOffer());
-            dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+
+            // for menus filter option - no of pax
+            if (noOfPax == null)
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+             else
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax));
+
+            // for menus filter option - cost
+            // TODO
+
             dto.setNumOfReview(numOfReviews(catererId));
             dto.setContactNo(caterers.getContactNo());
             dto.setDeliveryFee(caterers.getDeliveryFee());
@@ -211,7 +220,8 @@ public class CatererProcessor {
                                                         Integer isHalal,
                                                         Double minAvgRating,
                                                         Boolean isAmazingTaste,
-                                                        Boolean isValueForMoney) {
+                                                        Boolean isValueForMoney,
+                                                        Integer noOfPax) {
 
             //Determine query type and Pageable Settings
             boolean isSortingByAvgRating = false;
@@ -229,9 +239,10 @@ public class CatererProcessor {
 
 
             Page<Caterers> caterersPage = catererRepository.findAllFilteredAndSorted(
-                    effectivePageable, isHalal, minAvgRating, isAmazingTaste, isValueForMoney);
+                    effectivePageable, isHalal, minAvgRating, isAmazingTaste, isValueForMoney, noOfPax);
 
-            return caterersPage.map(this::mapToPaginatedCatererDTO);
+//            return caterersPage.map(this::mapToPaginatedCatererDTO);
+            return caterersPage.map(c -> this.mapToPaginatedCatererDTO(c, noOfPax));
         }
 
         //method to remove sort parameters

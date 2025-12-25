@@ -46,7 +46,8 @@ public class CatererController {
                                                  @RequestParam(required = false) Integer isHalal,
                                                  @RequestParam(required = false) Double minAvgRating,
                                                  @RequestParam(required = false) boolean isAmazingTaste,
-                                                 @RequestParam(required = false) boolean isValueForMoney
+                                                 @RequestParam(required = false) boolean isValueForMoney,
+                                                 @RequestParam(required = false) Integer noOfPax
 
                                                  ) {
         int zeroIndexedPage = page - 1;
@@ -55,7 +56,7 @@ public class CatererController {
         }
 
         Pageable pageable = PageRequest.of(zeroIndexedPage, size, Sort.by(sortBy));
-        return catererProcessor.getAllCaterers(pageable,isHalal,minAvgRating,isAmazingTaste,isValueForMoney);
+        return catererProcessor.getAllCaterers(pageable,isHalal,minAvgRating,isAmazingTaste,isValueForMoney,noOfPax);
 
     }
 

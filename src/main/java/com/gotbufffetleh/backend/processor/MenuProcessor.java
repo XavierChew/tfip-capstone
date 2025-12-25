@@ -59,4 +59,27 @@ public class MenuProcessor {
         }
         return dtoList;
     }
+
+    // if noOfPax parameter is filled
+    public List<GetMenuDTO> getMenusForPaginated(Long catererId, int noOfPax){
+        List<GetMenuDTO> dtoList = new ArrayList<>();
+
+        for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
+            // if noOfPax > menu.getMinimumPax()
+            // and if cost < menu.getCostPerPax()
+            // then do this:
+            if (noOfPax >= menu.getMinimumPax() ) {
+                GetMenuDTO dto = new GetMenuDTO();
+                dto.setMenuId(menu.getMenuId());
+                dto.setMenuName(menu.getMenuName());
+                dto.setMinimumPax(menu.getMinimumPax());
+                dto.setNumOfCourses(menu.getNoOfCourses());
+                dto.setCostPerPax(menu.getCostPerPax());
+                dtoList.add(dto);
+            }
+
+        }
+        return dtoList;
+    }
+
 }
