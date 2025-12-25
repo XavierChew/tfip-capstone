@@ -46,7 +46,7 @@ public class MenuProcessor {
     }
 
     // helper method to get paginated view for menu
-    // search page (no filters)
+    // search page (no filters) and if no menu params provided
     public List<GetMenuDTO> getMenusForPaginated(Long catererId){
         List<GetMenuDTO> dtoList = new ArrayList<>();
 
@@ -56,40 +56,37 @@ public class MenuProcessor {
         return dtoList;
     }
 
-    // all caterers page (many many filters)
-    public List<GetMenuDTO> getMenusForPaginated(Long catererId, int noOfPax, BigDecimal budget){
+    // all caterers page - method overloading based on params provided
+    // if only noOfPax provided
+    public List<GetMenuDTO> getMenusForPaginated(Long catererId, int noOfPax) {
         List<GetMenuDTO> dtoList = new ArrayList<>();
-
-        // both not provided
-        if ((noOfPax == -1) && (Objects.equals(budget, BigDecimal.valueOf(9999))) ) {
-            for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
+        for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)) {
+            if (noOfPax >= menu.getMinimumPax()) {
                 mapToGetMenuDTO(dtoList, menu);
             }
         }
-        // if noOfPax provided
-        else if (Objects.equals(budget, BigDecimal.valueOf(9999)) ) {
-            for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)) {
-                if (noOfPax >= menu.getMinimumPax()) {
-                    mapToGetMenuDTO(dtoList, menu);
-                }
-            }
-        }
-        // if budget provided
-        else if (noOfPax == -1) {
-            for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
-                if (budget.compareTo(menu.getCostPerPax()) >= 0) { // budget is greater than or equal to cost
-                    mapToGetMenuDTO(dtoList, menu);
-                }
-            }
-        // both params provided
-        } else {
-            for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
-                if ( noOfPax >= menu.getMinimumPax() && (budget.compareTo(menu.getCostPerPax()) >= 0) ) {
-                    mapToGetMenuDTO(dtoList, menu);
-                }
-            }
-        }
+        return dtoList;
+    }
 
+    // if only budget provided
+    public List<GetMenuDTO> getMenusForPaginated(Long catererId, BigDecimal budget) {
+        List<GetMenuDTO> dtoList = new ArrayList<>();
+        for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
+            if (budget.compareTo(menu.getCostPerPax()) >= 0) { // budget is greater than or equal to cost
+                mapToGetMenuDTO(dtoList, menu);
+            }
+        }
+        return dtoList;
+    }
+
+    // if both params provided
+    public List<GetMenuDTO> getMenusForPaginated(Long catererId, int noOfPax, BigDecimal budget){
+        List<GetMenuDTO> dtoList = new ArrayList<>();
+        for(Menu menu : this.menuRepository.findMenuByCatererId(catererId)){
+            if ( noOfPax >= menu.getMinimumPax() && (budget.compareTo(menu.getCostPerPax()) >= 0) ) {
+                mapToGetMenuDTO(dtoList, menu);
+            }
+        }
         return dtoList;
     }
 

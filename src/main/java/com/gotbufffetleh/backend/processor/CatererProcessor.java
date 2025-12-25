@@ -202,13 +202,13 @@ public class CatererProcessor {
             // for menus filter option
             // if noOfPax and budget not provided
             if ((noOfPax == null) && (budget == null))
-                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, -1, BigDecimal.valueOf(9999)));
-            // if noOfPax provided
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+            // if only noOfPax provided
              else if (budget == null)
-                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax, BigDecimal.valueOf(9999)));
-            // if budget provided
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax));
+            // if only budget provided
              else if (noOfPax == null)
-                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, -1, budget));
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, budget));
             // if both params provided
              else
                 dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax, budget));
