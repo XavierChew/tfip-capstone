@@ -12,6 +12,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -185,7 +186,7 @@ public class CatererProcessor {
         //https://medium.com/@ayoubtaouam/mastering-pagination-and-sorting-in-spring-boot-c2b64fd23467
 
         //helper method to map the Entity to PaginatedCatererDTO
-        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers, Integer noOfPax) {
+        private PaginatedCatererDTO mapToPaginatedCatererDTO(Caterers caterers, Integer noOfPax, BigDecimal budget) {
             Long catererId = caterers.getCatererId();
             PaginatedCatererDTO dto = new PaginatedCatererDTO();
             dto.setCatererId(catererId);
@@ -198,22 +199,25 @@ public class CatererProcessor {
             dto.setAvgRating(avgRating(catererId));
             dto.setDeliveryOffer(caterers.getDeliveryOffer());
 
-            // for menus filter option - no of pax
-            if (noOfPax == null)
-                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId));
+            // for menus filter option
+            // if noOfPax and budget not provided
+            if ((noOfPax == null) && (budget == null))
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, -1, BigDecimal.valueOf(9999)));
+            // if noOfPax provided
+             else if (budget == null)
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax, BigDecimal.valueOf(9999)));
+            // if budget provided
+             else if (noOfPax == null)
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, -1, budget));
+            // if both params provided
              else
-                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax));
-
-            // for menus filter option - cost
-            // TODO
+                dto.setMenus(this.menuProcessor.getMenusForPaginated(catererId, noOfPax, budget));
 
             dto.setNumOfReview(numOfReviews(catererId));
             dto.setContactNo(caterers.getContactNo());
             dto.setDeliveryFee(caterers.getDeliveryFee());
 
-
             return dto;
-
         }
 
         public Page<PaginatedCatererDTO> getAllCaterers(Pageable pageable,
@@ -221,7 +225,8 @@ public class CatererProcessor {
                                                         Double minAvgRating,
                                                         Boolean isAmazingTaste,
                                                         Boolean isValueForMoney,
-                                                        Integer noOfPax) {
+                                                        Integer noOfPax,
+                                                        BigDecimal budget) {
 
             //Determine query type and Pageable Settings
             boolean isSortingByAvgRating = false;
@@ -236,13 +241,13 @@ public class CatererProcessor {
 
             Pageable effectivePageable = isSortingByAvgRating ? removeSort(pageable) : pageable;
 
-
-
+            // filter caterers
             Page<Caterers> caterersPage = catererRepository.findAllFilteredAndSorted(
-                    effectivePageable, isHalal, minAvgRating, isAmazingTaste, isValueForMoney, noOfPax);
+                    effectivePageable, isHalal, minAvgRating, isAmazingTaste, isValueForMoney, noOfPax, budget);
 
+            // menus will be filtered out during the mapping
 //            return caterersPage.map(this::mapToPaginatedCatererDTO);
-            return caterersPage.map(c -> this.mapToPaginatedCatererDTO(c, noOfPax));
+            return caterersPage.map(c -> this.mapToPaginatedCatererDTO(c, noOfPax, budget));
         }
 
         //method to remove sort parameters

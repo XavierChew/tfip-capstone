@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -50,8 +51,8 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
         "AND (:isValueForMoney IS NULL OR :isValueForMoney = false OR" +
         "( (CASE WHEN fv.isValueForMoney = 1 THEN true ELSE false END) = :isValueForMoney) ) " + // true or false for value for $ -> CatererFilterVars
 
-        // NEW PARAMS: MIN GROUP SIZE and COST PER PAX
         "AND (:noOfPax IS NULL OR m.minimumPax <= :noOfPax) " + // noOfPax -> Menu
+        "AND (:budget IS NULL OR m.costPerPax <= :budget) " + // budget -> Menu
 
         "ORDER BY fv.avgRating DESC"
     )
@@ -60,8 +61,8 @@ public interface CatererRepository extends JpaRepository<Caterers, Long> {
                                             @Param("minAvgRating") Double minAvgRating,
                                             @Param("isAmazingTaste") Boolean isAmazingTaste,
                                             @Param("isValueForMoney") Boolean isValueForMoney,
-                                            @Param("noOfPax") Integer noOfPax)
-                                            ;
+                                            @Param("noOfPax") Integer noOfPax,
+                                            @Param("budget") BigDecimal budget);
 
 
     @Query("SELECT DISTINCT c FROM Caterers c LEFT JOIN c.menuList m WHERE " +

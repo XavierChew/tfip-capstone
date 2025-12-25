@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,16 +48,15 @@ public class CatererController {
                                                  @RequestParam(required = false) Double minAvgRating,
                                                  @RequestParam(required = false) boolean isAmazingTaste,
                                                  @RequestParam(required = false) boolean isValueForMoney,
-                                                 @RequestParam(required = false) Integer noOfPax
-
-                                                 ) {
+                                                 @RequestParam(required = false) Integer noOfPax,
+                                                 @RequestParam(required = false) BigDecimal budget) {
         int zeroIndexedPage = page - 1;
         if(zeroIndexedPage < 0) {
             zeroIndexedPage = 0;
         }
 
         Pageable pageable = PageRequest.of(zeroIndexedPage, size, Sort.by(sortBy));
-        return catererProcessor.getAllCaterers(pageable,isHalal,minAvgRating,isAmazingTaste,isValueForMoney,noOfPax);
+        return catererProcessor.getAllCaterers(pageable,isHalal,minAvgRating,isAmazingTaste,isValueForMoney,noOfPax, budget);
 
     }
 
